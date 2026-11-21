@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#ece7fb">
+<meta name="theme-color" content="#FFF8F0">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -15,36 +15,38 @@
 <title>Petit Dodo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root,[data-theme="day"]{
-  --bg:#fbf7f2;--bg2:#ece7fb;--surface:#ffffff;--surface2:#f6f2fb;--border:#ebe5f3;
-  --text:#3a3450;--muted:#7a7391;--faint:#a9a2bb;
-  --accent:#7b68e0;--on-accent:#ffffff;
-  --sleep:#9d8cf2;--sleep2:#6f60d4;--sleep-soft:#efebff;
-  --feed:#f3a07a;--feed-soft:#ffefe6;--bottle:#ecbd52;--bottle-soft:#fff6de;
-  --diaper:#62c3a3;--diaper-soft:#e3f6ef;--note:#74a9e6;--note-soft:#e7f1fd;
-  --ok:#62c3a3;--warn:#ecbd52;--hot:#f0907a;--danger:#d9586f;
-  --shadow:0 8px 28px rgba(96,80,160,.08),0 1px 3px rgba(96,80,160,.05);
-  --scrim:rgba(58,52,80,.28);
+  --bg:#FFF8F0;--bg2:#F4EFFF;--surface:#ffffff;--surface2:#F5F0FA;--border:#EFE8F5;
+  --text:#2E2A4F;--muted:#6E6890;--faint:#9A94B5;
+  --accent:#7563F0;--on-accent:#ffffff;
+  --sleep:#7563F0;--sleep2:#3F3496;--sleep-soft:#ECE8FF;--pred:#B7ADF5;--sleep-ink:#3F3496;
+  --feed:#F07C5A;--feed-soft:#FFE8DF;--feed-ink:#B3502F;--bottle:#E9A21E;--bottle-soft:#FFF2D4;--bottle-ink:#9A6408;
+  --diaper:#1FA895;--diaper-soft:#DBF4EF;--diaper-ink:#11705F;--note:#5B8FD9;--note-soft:#E5EEFC;
+  --ok:#1FA895;--warn:#E9A21E;--hot:#F07C5A;--danger:#D9466A;
+  --dial-track:#F3EEFA;--dial-tick:#D9D1EA;--now:#2E2A4F;
+  --shadow:0 10px 30px rgba(80,60,160,.09),0 1px 3px rgba(80,60,160,.05);
+  --scrim:rgba(46,42,79,.3);
   color-scheme:light;
 }
 [data-theme="night"]{
-  --bg:#13132e;--bg2:#24224f;--surface:#1d1d40;--surface2:#272652;--border:#32315e;
-  --text:#f1efff;--muted:#aeaad3;--faint:#78759f;
-  --accent:#b4a8ff;--on-accent:#1b173d;
-  --sleep:#b4a8ff;--sleep2:#7c6ee2;--sleep-soft:#2e2b63;
-  --feed:#ffb795;--feed-soft:#3a2c45;--bottle:#ffd77e;--bottle-soft:#373448;
-  --diaper:#86dcc0;--diaper-soft:#203f48;--note:#a0c8ff;--note-soft:#233459;
-  --ok:#86dcc0;--warn:#ffd77e;--hot:#ff9f8a;--danger:#ff8095;
-  --shadow:0 8px 28px rgba(0,0,0,.25);
+  --bg:#16142E;--bg2:#1C1A3E;--surface:#221F48;--surface2:#2E2A5E;--border:#34306A;
+  --text:#F4F2FF;--muted:#A9A2D6;--faint:#7E78AE;
+  --accent:#C9BFFF;--on-accent:#1B173D;
+  --sleep:#B5A9FF;--sleep2:#8C7DFF;--sleep-soft:#2E2A5E;--pred:#6F64C8;--sleep-ink:#C9BFFF;
+  --feed:#FFB795;--feed-soft:#3A2C48;--feed-ink:#FFB795;--bottle:#FFD77E;--bottle-soft:#33304C;--bottle-ink:#FFD77E;
+  --diaper:#86DCC0;--diaper-soft:#203F48;--diaper-ink:#86DCC0;--note:#A0C8FF;--note-soft:#243459;
+  --ok:#86DCC0;--warn:#FFD77E;--hot:#FF9F8A;--danger:#FF8095;
+  --dial-track:#2E2960;--dial-tick:#5B54A0;--now:#FFFFFF;
+  --shadow:0 10px 30px rgba(0,0,0,.25);
   --scrim:rgba(6,6,24,.6);
   color-scheme:dark;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:var(--bg)}
 body{color:var(--text);font-family:'Nunito',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.5;min-height:100vh;padding-top:env(safe-area-inset-top);
-  background:linear-gradient(180deg,var(--bg2) 0,var(--bg) 420px) no-repeat,var(--bg);transition:background-color .4s ease}
+  background:linear-gradient(180deg,var(--bg2) 0,var(--bg) 360px) no-repeat,var(--bg);transition:background-color .4s ease}
 [data-theme="night"] body{background:
   radial-gradient(1.5px 1.5px at 12% 6%,rgba(255,255,255,.55) 50%,transparent 51%),
   radial-gradient(1px 1px at 32% 14%,rgba(255,255,255,.45) 50%,transparent 51%),
@@ -56,8 +58,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 button{background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
 .app{max-width:520px;margin:0 auto;padding:12px 18px calc(112px + env(safe-area-inset-bottom))}
-h1,h2,h3,.serif{font-family:'Quicksand','Nunito',sans-serif;font-weight:700;letter-spacing:-.01em}
-h1{font-size:28px;line-height:1.15}
+h1,h2,h3,.serif{font-family:'Fredoka','Nunito',sans-serif;font-weight:600;letter-spacing:0}
+h1{font-size:32px;line-height:1.1}
 h2{font-size:20px;line-height:1.25}
 h3{font-size:16px}
 .muted{color:var(--muted)}
@@ -85,11 +87,11 @@ h3{font-size:16px}
 .ringsvg .prog{fill:none;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset .8s ease,stroke .8s ease}
 .ring-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .ring-in .lbl{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
-.ring-in .big{font-family:'Quicksand',sans-serif;font-weight:700;font-size:25px;font-variant-numeric:tabular-nums}
+.ring-in .big{font-family:'Fredoka',sans-serif;font-weight:700;font-size:25px;font-variant-numeric:tabular-nums}
 .st-txt{flex:1;min-width:0}
 .st-txt h2{margin-bottom:2px}
 .st-txt p{font-size:14px;margin-bottom:2px}
-.st-txt .when{font-family:'Quicksand',sans-serif;font-weight:700;font-size:30px;overflow-wrap:anywhere;line-height:1.1;margin:2px 0 4px;color:var(--accent)}
+.st-txt .when{font-family:'Fredoka',sans-serif;font-weight:700;font-size:30px;overflow-wrap:anywhere;line-height:1.1;margin:2px 0 4px;color:var(--accent)}
 .st-txt .btn{margin-top:12px}
 .link{color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-size:inherit;padding:0;font-weight:700}
 .breathe{animation:breathe 5s ease-in-out infinite}
@@ -97,7 +99,7 @@ h3{font-size:16px}
 
 /* Buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:999px;background:var(--surface2);border:1px solid var(--border);font-weight:800;font-size:15px;transition:transform .15s ease}
-.btn.primary{background:var(--accent);color:var(--on-accent);border-color:transparent;box-shadow:0 6px 18px rgba(123,104,224,.28)}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:transparent;box-shadow:0 6px 18px rgba(117,99,240,.3)}
 [data-theme="night"] .btn.primary{box-shadow:none}
 .btn.feed{background:var(--feed);color:#3a1d0d;border-color:transparent}
 .btn.danger{color:var(--danger);background:transparent;border-color:var(--border)}
@@ -152,7 +154,7 @@ h3{font-size:16px}
 .list li.pred .ttl{color:var(--accent)}
 .list button.rowbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left}
 .who{font-size:11px;font-weight:800;color:var(--accent);background:var(--sleep-soft);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:1px}
-.dayhead{font-family:'Quicksand',sans-serif;font-weight:700;font-size:15px;color:var(--muted);margin:18px 4px 8px}
+.dayhead{font-family:'Fredoka',sans-serif;font-weight:700;font-size:15px;color:var(--muted);margin:18px 4px 8px}
 .c-sleep{background:var(--sleep-soft)!important}
 .c-feed{background:var(--feed-soft)!important}
 .c-bottle{background:var(--bottle-soft)!important}
@@ -179,7 +181,7 @@ h3{font-size:16px}
 .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:14px;box-shadow:var(--shadow)}
 .kpi .k{font-size:12.5px;color:var(--muted);font-weight:600}
-.kpi .v{font-family:'Quicksand',sans-serif;font-weight:700;font-size:24px}
+.kpi .v{font-family:'Fredoka',sans-serif;font-weight:700;font-size:24px}
 .chart svg{width:100%;height:auto;display:block}
 .legend{display:flex;gap:14px;font-size:12.5px;color:var(--muted);margin-top:6px;font-weight:600}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
@@ -256,6 +258,92 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .empty .em{font-size:36px;display:block;margin-bottom:8px}
 .foot{text-align:center;color:var(--faint);font-size:12.5px;margin-top:26px}
 .skel{height:160px;border-radius:24px;background:var(--surface);border:1px solid var(--border);margin-bottom:14px;animation:breathe 1.6s ease-in-out infinite}
+
+/* v2.1 — design « cadran » */
+.hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:12px 4px 16px}
+.hdr .date{font-size:13px;font-weight:700;color:var(--muted)}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.pill{font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;background:var(--sleep-soft);color:var(--accent)}
+.pill.alt{background:var(--surface2);color:var(--muted)}
+.sky{width:52px;height:52px;flex:0 0 52px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--bottle-soft);color:var(--bottle)}
+.dialcard{background:var(--surface);border-radius:32px;box-shadow:var(--shadow);padding:16px 18px 18px;margin-bottom:12px}
+.dialwrap{position:relative;width:100%;max-width:300px;aspect-ratio:1;margin:0 auto}
+.dialwrap svg{width:100%;height:100%;display:block}
+.dialc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 22%}
+.dialc .lbl{font-size:12.5px;font-weight:800;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.dialc .big{font-family:'Fredoka','Nunito',sans-serif;font-weight:600;font-size:50px;line-height:1.05;font-variant-numeric:tabular-nums}
+.dialc .big.clock{font-size:42px}
+.dialc .chip2{font-size:14px;font-weight:800;color:var(--accent);background:var(--sleep-soft);padding:4px 12px;border-radius:999px;margin-top:4px;white-space:nowrap}
+.dialc .chip2.due{color:var(--feed-ink);background:var(--feed-soft)}
+.dialc .sm{font-size:12px;font-weight:700;color:var(--faint);margin-top:6px}
+.wbar{margin-top:10px}
+.wbar .t{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:700}
+.wbar .t span:last-child{color:var(--muted)}
+.wbar .tr{height:10px;border-radius:999px;background:var(--dial-track);margin-top:8px;overflow:hidden}
+.wbar .tr i{display:block;height:10px;border-radius:999px;transition:width .8s ease}
+.wakebox{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;background:var(--surface2);border-radius:18px;padding:12px 14px}
+.wakebox .k{font-size:12px;font-weight:800;color:var(--muted)}
+.wakebox .v{font-family:'Fredoka','Nunito',sans-serif;font-weight:600;font-size:22px;color:var(--sleep-ink)}
+.wakebox .r{font-size:12px;font-weight:700;color:var(--muted);text-align:right}
+.wakebox .r b{color:var(--text)}
+.slept{font-size:13px;font-weight:700;color:var(--muted);text-align:center;margin-top:8px}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.tiles.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.tile{border-radius:20px;padding:10px 12px;min-width:0}
+.tile .k{font-size:11px;font-weight:800;color:var(--muted)}
+.tile .v{font-family:'Fredoka','Nunito',sans-serif;font-weight:600;font-size:19px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .s{font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-sleep{background:var(--sleep-soft)}.t-sleep .v{color:var(--sleep-ink)}
+.t-bottle{background:var(--bottle-soft)}.t-bottle .v{color:var(--bottle-ink)}
+.t-diaper{background:var(--diaper-soft)}.t-diaper .v{color:var(--diaper-ink)}
+[data-theme="night"] .t-sleep,[data-theme="night"] .t-bottle,[data-theme="night"] .t-diaper{background:var(--surface)}
+.acts{display:flex;justify-content:space-around;align-items:flex-end;margin:4px 0 16px}
+.act{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:58px;font-size:12px;font-weight:800;color:var(--muted)}
+.act .o{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .15s ease}
+.act:active .o{transform:scale(.92)}
+.act.big .o{width:66px;height:66px;background:var(--accent);color:var(--on-accent);box-shadow:0 8px 20px rgba(117,99,240,.35)}
+.act.big{color:var(--text)}
+[data-theme="night"] .act.big .o{box-shadow:none}
+.act.on .o{outline:2.5px solid var(--accent);outline-offset:3px}
+.a-bottle .o{background:var(--bottle-soft);color:var(--bottle)}
+.a-diaper .o{background:var(--diaper-soft);color:var(--diaper)}
+.a-feed .o{background:var(--feed-soft);color:var(--feed)}
+.a-more .o{background:var(--surface2);color:var(--muted)}
+.wakebtn{width:100%;min-height:60px;border-radius:999px;background:var(--bottle);color:#3A2A00;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;gap:10px;margin:2px 0 14px}
+[data-theme="day"] .wakebtn{background:var(--accent);color:var(--on-accent);box-shadow:0 8px 20px rgba(117,99,240,.3)}
+.wakebtn:active{transform:scale(.98)}
+.mini{display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:22px;padding:10px 12px 10px 14px;margin-bottom:12px;box-shadow:var(--shadow)}
+.mini .ic2{width:40px;height:40px;border-radius:50%;background:var(--sleep-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;flex:0 0 40px}
+.mini .m{flex:1;min-width:0}
+.mini .m b{display:block;font-size:14px}
+.mini .m span{font-size:12px;font-weight:700;color:var(--muted)}
+.mini .stop{width:44px;height:44px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text)}
+/* Journal en frise */
+.jday{margin:18px 2px 10px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.jday h3{font-size:17px}
+.jday span{font-size:12.5px;font-weight:700;color:var(--muted)}
+.jtiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.jtiles .tile{padding:8px 12px}
+.jtiles .tile .v{font-size:17px}
+.tl{list-style:none;position:relative;display:flex;flex-direction:column;gap:10px;margin-bottom:6px}
+.tl::before{content:"";position:absolute;left:69px;top:10px;bottom:10px;width:2px;background:var(--border);border-radius:2px}
+.tl button{display:flex;align-items:center;gap:10px;width:100%;text-align:left}
+.tl .tm{width:46px;flex:0 0 46px;font-size:13px;font-weight:800;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.tl .dot2{width:40px;height:40px;flex:0 0 40px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;box-shadow:0 0 0 4px var(--bg)}
+.tl .bx{flex:1;min-width:0;background:var(--surface);border-radius:18px;padding:9px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(80,60,160,.06)}
+[data-theme="night"] .tl .bx{box-shadow:none}
+.tl .bx .tx{flex:1;min-width:0}
+.tl .bx .tt{display:block;font-size:14px;font-weight:800;line-height:1.3}
+.tl .bx .ss{display:block;font-size:12px;font-weight:600;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl .fut .bx{background:transparent;border:1.5px dashed var(--border);box-shadow:none}
+.av{width:26px;height:26px;flex:0 0 26px;border-radius:50%;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;background:var(--sleep-soft);color:var(--sleep-ink)}
+.av.b{background:var(--feed-soft);color:var(--feed-ink)}
+.k-sleep{background:var(--sleep-soft);color:var(--sleep)}
+.k-feed,.k-med,.k-temp{background:var(--feed-soft);color:var(--feed)}
+.k-bottle{background:var(--bottle-soft);color:var(--bottle)}
+.k-diaper,.k-growth{background:var(--diaper-soft);color:var(--diaper)}
+.k-note,.k-bath,.k-visit{background:var(--note-soft);color:var(--note)}
+.qa .em svg,.list .ic svg{display:block}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -311,11 +399,13 @@ try { S.theme = localStorage.getItem('petitdodo.theme') || 'auto'; } catch (e) {
 function resolvedTheme() {
   if (S.theme === 'day' || S.theme === 'night') return S.theme;
   const c = cfg(), m = minutesOf(Date.now());
+  const on = S.events && S.events.length ? ongoing('sleep') : null;
+  if (on && isNight(on)) return 'night';
   return (m >= parseHM(c.bedtime) || m < parseHM(c.wakeTime)) ? 'night' : 'day';
 }
 function applyTheme() {
   const t = resolvedTheme(), r = document.documentElement;
-  if (r.dataset.theme !== t) { r.dataset.theme = t; const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = t === 'night' ? '#24224f' : '#ece7fb'; }
+  if (r.dataset.theme !== t) { r.dataset.theme = t; const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = t === 'night' ? '#16142E' : '#FFF8F0'; }
 }
 const DECO_DAY = '<svg class="deco" viewBox="0 0 64 64" aria-hidden="true"><circle cx="38" cy="24" r="13" fill="var(--bottle)"/><path d="M13 45a9.5 9.5 0 0 1 10-10.5 13 13 0 0 1 24.5 3A8 8 0 0 1 47 53H20a8 8 0 0 1-7-8z" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/></svg>';
 const DECO_NIGHT = '<svg class="deco" viewBox="0 0 64 64" aria-hidden="true"><mask id="crescent"><rect width="64" height="64" fill="#fff"/><circle cx="41" cy="24" r="15" fill="#000"/></mask><circle cx="31" cy="33" r="19" fill="var(--bottle)" mask="url(#crescent)"/><circle cx="49" cy="14" r="1.8" fill="var(--text)" opacity=".85"/><circle cx="55" cy="30" r="1.3" fill="var(--text)" opacity=".7"/><circle cx="44" cy="6" r="1.1" fill="var(--text)" opacity=".6"/></svg>';
@@ -1052,12 +1142,6 @@ function banner() {
   if (S.dbError) b += `<div class="banner warn">${S.dbError === 'permission-denied' ? "Accès refusé : ton adresse e-mail n'est pas dans les règles Firebase (voir le guide, étape 4)." : "Synchronisation interrompue. Recharge l'app pour la relancer."}</div>`;
   return b;
 }
-function header() {
-  const c = cfg(), a = ageText();
-  const h = new Date().getHours();
-  const hello = h < 5 || h >= 21 ? 'Bonne nuit' : h < 18 ? 'Bonjour' : 'Bonsoir';
-  return `<div class="top"><div><div class="muted small" style="font-weight:700">${hello}</div><h1>${esc(c.babyName)}</h1>${a ? `<span class="agepill">${a}</span>` : ''}</div>${resolvedTheme() === 'night' ? DECO_NIGHT : DECO_DAY}</div>`;
-}
 function statusCard(now, pr) {
   const c = cfg(), on = ongoing('sleep'), name = esc(c.babyName);
   if (on) {
@@ -1162,13 +1246,161 @@ function healthCards(now) {
   }
   return h;
 }
+/* ---------- v2.1 : icônes, cadran 24 h, accueil ---------- */
+const ICONS = {
+  moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  bottle: '<path d="M9 2h6M10 2v3l-2 3v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V8l-2-3V2"/><path d="M8 12h8M8 16h8"/>',
+  drop: '<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
+  diaper: '<path d="M3 7h18v3a9 9 0 0 1-18 0V7z"/><path d="M8 7v3M16 7v3"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  pill: '<rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(-35 12 12)"/><path d="M9.5 8.5l5 7"/>',
+  stop: '<rect x="7" y="7" width="10" height="10" rx="2"/>',
+  wave: '<path d="M3 12h2M7 8v8M11 5v14M15 9v6M19 11v2"/>',
+  note: '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/>',
+  bath: '<path d="M4 12h16v3a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5v-3z"/><path d="M6 12V6a2 2 0 0 1 4 0M7 20l-1 2M17 20l1 2"/>',
+  scale: '<rect x="3" y="4" width="18" height="16" rx="4"/><path d="M8 9a5 5 0 0 1 8 0M12 9l1.5-2"/>',
+  thermo: '<path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 9v7"/>',
+  visit: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18M12 13v5M9.5 15.5h5"/>'
+};
+const ico = (n, s) => `<svg width="${s || 22}" height="${s || 22}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
+const TYPE_ICON = { sleep: 'moon', feed: 'drop', bottle: 'bottle', diaper: 'diaper', note: 'note', bath: 'bath', med: 'pill', growth: 'scale', temp: 'thermo', visit: 'visit' };
+const cap1 = x => x ? x.charAt(0).toUpperCase() + x.slice(1) : x;
+
+function header() {
+  const c = cfg(), a = ageText(), night = resolvedTheme() === 'night', on = ongoing('sleep');
+  const now = Date.now();
+  let date = cap1(new Date(now).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }));
+  if (on && isNight(on)) {
+    const a0 = new Date(on.start), a1 = new Date(on.start + DAY);
+    if (a0.getHours() >= 12) date = 'Nuit du ' + a0.getDate() + ' au ' + a1.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+  }
+  const pw = Number(c.premWeeks) || 0;
+  const corr = pw && birthTime() != null ? Math.floor(whoAgeDays(now) / 7) : null;
+  const pills = (a ? `<span class="pill">${a}</span>` : '') + (corr != null ? `<span class="pill alt">${corr >= 0 ? corr + ' sem. corrigée' + (corr > 1 ? 's' : '') : 'avant terme'}</span>` : '');
+  const title = on && isNight(on) ? esc(c.babyName) + ' dort' : esc(c.babyName);
+  return `<header class="hdr"><div><div class="date">${date}</div><h1>${title}</h1>${pills ? `<div class="pills">${pills}</div>` : ''}</div>
+    <div class="sky" aria-hidden="true">${night ? ico('moon', 26) : ico('sun', 26)}</div></header>`;
+}
+
+/* Cadran 24 h : chaque événement est placé à son heure d'horloge (0 h en haut). */
+function dial(now, pr, label) {
+  const on = ongoing('sleep'), nightMode = !!(on && isNight(on)) || resolvedTheme() === 'night';
+  const w0 = nightMode ? now - 19 * HR : startOfDay(now), w1 = w0 + DAY;
+  const S0 = 300, cx = 150, cy = 150, r = 110, sw = 22;
+  const mid = startOfDay(now);
+  const hOf = t => { let h = ((t - mid) / HR) % 24; if (h < 0) h += 24; return h; };
+  const P = (rad, h) => { const a = (h / 24 * 360 - 90) * Math.PI / 180; return [cx + rad * Math.cos(a), cy + rad * Math.sin(a)]; };
+  const arc = (t0, t1, rad) => {
+    const d = (t1 - t0) / HR; if (d <= 0) return '';
+    if (d >= 23.95) return `M${cx} ${cy - rad} A${rad} ${rad} 0 1 1 ${cx - 0.01} ${cy - rad}`;
+    const [x0, y0] = P(rad, hOf(t0)), [x1, y1] = P(rad, hOf(t1));
+    return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${rad} ${rad} 0 ${d > 12 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+  };
+  let g = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--dial-track)" stroke-width="${sw}"/>`;
+  for (let h = 0; h < 24; h++) {
+    const [ax, ay] = P(r + sw / 2 + 5, h), [bx, by] = P(r + sw / 2 + (h % 6 ? 8 : 11), h);
+    g += `<line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="var(--dial-tick)" stroke-width="${h % 6 ? 1.2 : 2}" stroke-linecap="round"/>`;
+  }
+  for (const h of [0, 6, 12, 18]) { const [x, y] = P(r + sw / 2 + 22, h); g += `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--faint)">${h}h</text>`; }
+  const minArc = 6 * MIN;
+  for (const e of S.events) {
+    if (e.type === 'sleep') {
+      const a = Math.max(e.start, w0), b = Math.min(e.end == null ? now : e.end, w1);
+      if (b - a < 60 * 1000) continue;
+      const bb = Math.max(b, a + minArc);
+      g += `<path d="${arc(a, bb, r)}" fill="none" stroke="${isNight(e) ? 'var(--sleep2)' : 'var(--sleep)'}" stroke-width="${sw}" stroke-linecap="round"/>`;
+    }
+  }
+  const pend = [...pr.items];
+  if (pr.wake && on) pend.push({ start: now, end: pr.wake });
+  for (const it of pend) {
+    const a = Math.max(it.start, w0, now), b = Math.min(it.end, w1);
+    if (b - a < 60 * 1000) continue;
+    g += `<path d="${arc(a, Math.max(b, a + minArc), r)}" fill="none" stroke="var(--pred)" stroke-width="${sw - 6}" stroke-linecap="round" stroke-dasharray="2 7"/>`;
+  }
+  if (pr.bedtime && pr.bedtime > now && pr.bedtime < w1) { const [x0, y0] = P(r - sw / 2, hOf(pr.bedtime)), [x1, y1] = P(r + sw / 2, hOf(pr.bedtime)); g += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="var(--sleep2)" stroke-width="3" stroke-linecap="round" opacity=".7"/>`; }
+  for (const e of S.events) {
+    if (e.start < w0 || e.start >= w1 || e.start > now) continue;
+    if (e.type === 'bottle' || e.type === 'feed') { const [x, y] = P(r - sw / 2 - 9, hOf(e.start)); g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="var(--${e.type === 'feed' ? 'feed' : 'bottle'})"/>`; }
+    else if (e.type === 'diaper') { const [x, y] = P(r - sw / 2 - 20, hOf(e.start)); g += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" fill="var(--diaper)"/>`; }
+  }
+  const [nx0, ny0] = P(r - sw / 2 - 2, hOf(now)), [nx1, ny1] = P(r + sw / 2 + 3, hOf(now));
+  g += `<line x1="${nx0.toFixed(1)}" y1="${ny0.toFixed(1)}" x2="${nx1.toFixed(1)}" y2="${ny1.toFixed(1)}" stroke="var(--now)" stroke-width="3" stroke-linecap="round"/><circle cx="${nx1.toFixed(1)}" cy="${ny1.toFixed(1)}" r="5" fill="var(--now)"/>`;
+  return `<svg viewBox="-12 -12 ${S0 + 24} ${S0 + 24}" role="img" aria-label="${esc(label)}" font-family="Nunito, sans-serif">${g}</svg>`;
+}
+
+function dialCard(now, pr) {
+  const on = ongoing('sleep');
+  if (on) {
+    const night = isNight(on);
+    const center = `<div class="lbl">${night ? 'Dort depuis' : 'Sieste depuis'}</div><div class="big clock" data-since="${on.start}">${durClock(now - on.start)}</div><div class="sm" style="margin-top:2px">${gx('endormi', 'endormie')} à ${hm(on.start)}</div>`;
+    let box = '';
+    if (pr.wake) {
+      const lab = night && pr.morning && pr.morning - pr.wake > HR ? 'Prochain réveil estimé' : 'Réveil estimé';
+      box = `<div class="wakebox"><div><div class="k">${lab}</div><div class="v">vers ${hm(pr.wake)}</div></div>${night && pr.morning && pr.morning - pr.wake > HR ? `<div class="r">lever du matin<br><b>~${hm(pr.morning)}</b></div>` : ''}</div>`;
+    } else if (night) {
+      box = `<div class="wakebox"><div><div class="k">Réveil</div><div class="v" style="font-size:17px">${gx('Il', 'Elle')} dort plus longtemps que d’habitude</div></div>${pr.morning ? `<div class="r">lever du matin<br><b>~${hm(pr.morning)}</b></div>` : ''}</div>`;
+    }
+    return `<section class="dialcard" aria-label="Sommeil en cours"><div class="dialwrap">${dial(now, pr, (night ? 'Nuit' : 'Sieste') + ' en cours depuis ' + hm(on.start))}<div class="dialc">${center}</div></div>${box}
+      <p class="slept"><button class="link" data-act="edit" data-id="${esc(on.id)}">Modifier l’heure d’endormissement</button></p></section>`;
+  }
+  const nx = pr.next;
+  const lw = pr.lastWake || now;
+  if (!nx) return `<section class="dialcard"><div class="dialwrap">${dial(now, pr, 'Cadran de la journée')}<div class="dialc"><div class="lbl">${gx('Éveillé', 'Éveillée')} depuis</div><div class="big">${dur(now - lw)}</div></div></div></section>`;
+  const label = nx.kind === 'nap' ? 'Prochaine sieste' : nx.kind === 'bed' ? 'Coucher' : 'Rendormir vers';
+  const tol = Math.max(10 * MIN, pr.P.ww * 0.12);
+  const span = Math.max(1, nx.start - lw), ratio = (now - lw) / span;
+  const col = ratio < 0.7 ? 'var(--ok)' : ratio < 1 ? 'var(--warn)' : 'var(--hot)';
+  const center = nx.start > now
+    ? `<div class="lbl">${label}</div><div class="big">${hm(nx.start)}</div><div class="chip2">dans ${dur(nx.start - now)}</div><div class="sm">entre ${hm(nx.start - tol)} et ${hm(nx.start + tol)}</div>`
+    : `<div class="lbl">${label}</div><div class="big" style="font-size:40px">Maintenant</div><div class="chip2 due">fenêtre ouverte depuis ${dur(now - nx.start)}</div>`;
+  const aria = label + ' prévue à ' + hm(nx.start);
+  return `<section class="dialcard" aria-label="${esc(label)}"><div class="dialwrap">${dial(now, pr, 'Cadran de la journée. ' + aria)}<div class="dialc">${center}</div></div>
+    <div class="wbar"><div class="t"><span>${gx('Éveillé', 'Éveillée')} depuis <b>${dur(now - lw)}</b></span><span>fenêtre ~${dur(pr.P.ww)}</span></div><div class="tr"><i style="width:${Math.min(100, Math.max(3, ratio * 100)).toFixed(0)}%;background:${col}"></i></div></div></section>`;
+}
+
+function homeTiles(now) {
+  const on = ongoing('sleep');
+  const ds = S.events.filter(e => e.type === 'diaper'); const d = ds[ds.length - 1];
+  const m = lastMeal();
+  if (on && isNight(on)) {
+    const mealV = m ? hm(m.start) + (m.type === 'bottle' ? ' · ' + (m.ml || '?') + ' ml' : ' · sein ' + sideName(m.side)) : '—';
+    return `<div class="tiles two"><div class="tile t-bottle"><div class="k">Dernier repas</div><div class="v">${mealV}</div></div><div class="tile t-diaper"><div class="k">Dernière couche</div><div class="v">${d ? hm(d.start) : '—'}</div></div></div>`;
+  }
+  const st = dayStats(startOfDay(now), now);
+  const ls = lastSide();
+  const meals = st.feeds + st.bottles;
+  const mealSub = m ? (m.type === 'feed' && m.end == null ? 'tétée en cours' : 'il y a ' + dur(now - (m.end || m.start))) + (ls ? '' : '') : 'aucun repas';
+  return `<div class="tiles">
+    <div class="tile t-sleep"><div class="k">Sommeil</div><div class="v">${st.day + st.night ? dur(st.day + st.night) : '—'}</div><div class="s">${st.naps ? st.naps + ' sieste' + (st.naps > 1 ? 's' : '') : 'aujourd’hui'}</div></div>
+    <div class="tile t-bottle"><div class="k">Repas</div><div class="v">${meals}${st.ml ? ' · ' + st.ml + ' ml' : ''}</div><div class="s">${mealSub}</div></div>
+    <div class="tile t-diaper"><div class="k">Couches</div><div class="v">${st.dia}</div><div class="s">${d ? 'il y a ' + dur(now - d.start) : 'aucune'}</div></div></div>`;
+}
+
+function homeActions() {
+  const on = ongoing('sleep'), f = ongoing('feed');
+  const b = (act, cls, icon, label, active) => `<button class="act ${cls}${active ? ' on' : ''}" data-act="${act}"><span class="o">${ico(icon, cls === 'big' ? 28 : 24)}</span><span>${label}</span></button>`;
+  if (on) return `<button class="wakebtn" data-act="sleep">${ico('sun', 22)}Noter le réveil</button>
+    <div class="acts">${b('bottle', 'a-bottle', 'bottle', 'Biberon')}${b('diaper', 'a-diaper', 'diaper', 'Couche')}${b('feed', 'a-feed', 'drop', 'Tétée', !!f)}${b('more', 'a-more', 'plus', 'Plus')}</div>`;
+  return `<div class="acts">${b('bottle', 'a-bottle', 'bottle', 'Biberon')}${b('diaper', 'a-diaper', 'diaper', 'Couche')}${b('sleep', 'big', 'moon', 'Dodo')}${b('feed', 'a-feed', 'drop', 'Tétée', !!f)}${b('more', 'a-more', 'plus', 'Plus')}</div>`;
+}
+
+function soundMini() {
+  if (!A.cur) return '';
+  const sd = SOUNDS.find(x => x.id === A.cur);
+  return `<section class="mini" aria-label="Son en cours"><span class="ic2">${ico('wave', 20)}</span><span class="m"><b>${esc(sd ? sd.name : 'Son')}</b><span>${A.stopAt ? `arrêt dans <b style="display:inline" data-until-clock="${A.stopAt}">${durClock(A.stopAt - Date.now())}</b>` : 'en boucle'}</span></span><button class="stop" data-act="snd-stop" aria-label="Arrêter le son">${ico('stop', 18)}</button></section>`;
+}
+
 function viewHome(now) {
-  if (S.mode === 'loading' || (S.mode === 'sync' && !S.loaded)) return header() + '<div class="skel"></div><div class="skel" style="height:80px"></div>';
+  if (S.mode === 'loading' || (S.mode === 'sync' && !S.loaded)) return header() + '<div class="skel" style="height:340px;border-radius:32px"></div><div class="skel" style="height:70px"></div>';
   const pr = predict(now);
   const learn = pr.P.learning ? `<p class="small faint" style="margin:6px 2px 0">Prédictions basées sur l'âge pour l'instant : elles s'affinent après environ une semaine de suivi.</p>` : '';
-  return header() + healthCards(now) + statusCard(now, pr) + runningFeed(now) + quickActions() + infoRow(now)
-    + `<div class="sec-title"><h3>Planning du jour</h3></div><div class="card">${strip(now, pr)}<div style="height:6px"></div>${planList(now, pr)}</div>${learn}`;
+  const legend = `<div class="legend" style="justify-content:center;flex-wrap:wrap;margin:-2px 0 12px"><span><i style="background:var(--sleep2)"></i>Nuit</span><span><i style="background:var(--sleep)"></i>Sieste</span><span><i style="background:var(--pred)"></i>Prévu</span><span><i style="background:var(--bottle)"></i>Repas</span><span><i style="background:var(--diaper)"></i>Couche</span></div>`;
+  return header() + healthCards(now) + runningFeed(now) + dialCard(now, pr) + legend + soundMini() + homeTiles(now) + homeActions()
+    + (ongoing('sleep') && isNight(ongoing('sleep')) ? '' : `<div class="sec-title"><h3>Planning du jour</h3></div><div class="card">${planList(now, pr)}</div>${learn}`);
 }
+
 function evTitle(e) {
   if (e.type === 'sleep') return (isNight(e) ? 'Nuit' : 'Sieste') + ' · ' + (e.end ? dur(e.end - e.start) : 'en cours');
   if (e.type === 'feed') return 'Tétée sein ' + sideName(e.side) + (e.end ? ' · ' + dur(e.end - e.start) : ' · en cours');
@@ -1190,23 +1422,35 @@ function evSub(e) {
   if (e.type === 'temp') return e.c >= 38 ? 'Fièvre' : '';
   return '';
 }
+function whoBadge(id) {
+  if (!id) return '';
+  const name = S.profiles[id] || (id === S.me ? 'Toi' : '');
+  if (!name) return '';
+  const ids = Object.keys(S.profiles).sort();
+  const alt = ids.indexOf(id) % 2 === 1;
+  return `<span class="av${alt ? ' b' : ''}" title="${esc(name)}">${esc(name.trim().charAt(0).toUpperCase())}</span>`;
+}
 function viewJournal(now) {
   const evs = [...S.events].reverse();
-  const head = `<div class="top"><h1>Journal</h1><button class="btn" data-act="add">+ Ajouter</button></div>`;
+  const head = `<div class="top"><h1>Journal</h1><button class="btn primary" data-act="add">${ico('plus', 18)}Ajouter</button></div>`;
   if (!evs.length) return head + `<div class="card empty"><span class="em">📒</span>Rien de noté pour l'instant. Utilise les boutons de l'onglet Aujourd'hui.</div>`;
   const limit = dayKey(now - (S.journalDays - 1) * DAY);
   const groups = new Map();
   for (const e of evs) { const k = dayKey(e.start); if (k < limit) continue; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(e); }
   let h = head;
   for (const [k, list] of groups) {
-    h += `<div class="dayhead">${dayLabel(k)}</div><div class="card" style="padding:4px 14px"><ul class="list">` + list.map(e => {
-      const w = whoName(e.by);
-      return `<li><button class="rowbtn" data-act="edit" data-id="${esc(e.id)}"><span class="ic ${TYPES[e.type].cls}">${TYPES[e.type].em}</span><span class="main"><span class="ttl">${evTitle(e)}</span>${w ? `<span class="who">${esc(w)}</span>` : ''}<br><span class="sub">${evSub(e)}</span></span><span class="tm">${hm(e.start)}</span></button></li>`;
-    }).join('') + `</ul></div>`;
+    const st = dayStats(new Date(k + 'T00:00').getTime(), now);
+    h += `<div class="jday"><h3>${dayLabel(k)}</h3><span>${list.length} saisie${list.length > 1 ? 's' : ''}</span></div>
+      <div class="jtiles"><div class="tile t-sleep"><div class="k">Sommeil</div><div class="v">${st.day + st.night ? dur(st.day + st.night) : '—'}</div></div><div class="tile t-bottle"><div class="k">${st.ml ? 'Lait' : 'Repas'}</div><div class="v">${st.ml ? st.ml + ' ml' : (st.feeds + st.bottles || '—')}</div></div><div class="tile t-diaper"><div class="k">Couches</div><div class="v">${st.dia || '—'}</div></div></div>
+      <ol class="tl">` + list.map(e => {
+      const t = TYPES[e.type] || TYPES.note, fut = e.start > now;
+      return `<li${fut ? ' class="fut"' : ''}><button data-act="edit" data-id="${esc(e.id)}"><span class="tm">${hm(e.start)}</span><span class="dot2 k-${e.type}">${ico(TYPE_ICON[e.type] || 'note', 20)}</span><span class="bx"><span class="tx"><span class="tt">${evTitle(e)}</span>${evSub(e) ? `<span class="ss">${evSub(e)}</span>` : ''}</span>${whoBadge(e.by)}</span></button></li>`;
+    }).join('') + `</ol>`;
   }
   if (evs.some(e => dayKey(e.start) < limit)) h += `<button class="btn block" data-act="journal-more" style="margin-top:8px">Afficher plus</button>`;
   return h;
 }
+
 function dayStats(ds, now) {
   const de = ds + DAY; let day = 0, night = 0, naps = 0, feeds = 0, bottles = 0, ml = 0, dia = 0;
   for (const e of S.events) {
@@ -1230,7 +1474,7 @@ function chart(days) {
   days.forEach((d, i) => {
     const x = pl + i * bw + bw * 0.2, w = bw * 0.6, n = d.night / HR, dd = d.day / HR;
     if (n > 0) g += `<rect x="${x}" y="${y(n)}" width="${w}" height="${y(0) - y(n)}" rx="6" fill="var(--sleep2)"><title>Nuit ${dur(d.night)}</title></rect>`;
-    if (dd > 0) g += `<rect x="${x}" y="${y(n + dd)}" width="${w}" height="${y(n) - y(n + dd)}" rx="6" fill="var(--sleep)"><title>Siestes ${dur(d.day)}</title></rect>`;
+    if (dd > 0) g += `<rect x="${x}" y="${y(n + dd)}" width="${w}" height="${y(n) - y(n + dd)}" rx="6" fill="var(--pred)"><title>Siestes ${dur(d.day)}</title></rect>`;
     g += `<text x="${x + w / 2}" y="${Hh - 6}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${new Date(d.ds).toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}</text>`;
   });
   return `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Heures de sommeil sur 7 jours">${g}</svg>`;
@@ -1314,7 +1558,7 @@ function viewStats(now) {
   const fmtH = v => v == null ? '—' : dur(v);
   const fmtN = v => v == null ? '—' : (Math.round(v * 10) / 10).toString().replace('.', ',');
   let h = `<div class="top"><h1>Statistiques</h1><span class="age">7 derniers jours</span></div>` + statsTabs();
-  h += `<div class="card chart">${chart(days)}<div class="legend"><span><i style="background:var(--sleep2)"></i>Nuit</span><span><i style="background:var(--sleep)"></i>Siestes</span></div></div>`;
+  h += `<div class="card chart">${chart(days)}<div class="legend"><span><i style="background:var(--sleep2)"></i>Nuit</span><span><i style="background:var(--pred)"></i>Siestes</span></div></div>`;
   h += `<div class="kpis">${k('Sommeil / 24 h', fmtH(avg(d => d.day + d.night)))}${k('Siestes / jour', fmtN(avg(d => d.naps)))}${k('Fenêtre d’éveil', dur(P.ww))}${k('Sieste type', dur(P.nap))}${k('Repas / jour', fmtN(avg(d => d.feeds + d.bottles)))}${k('Lait / jour', avg(d => d.ml) ? Math.round(avg(d => d.ml)) + ' ml' : '—')}${k('Nuit / 24 h', fmtH(avg(d => d.night)))}${k('Couches / jour', fmtN(avg(d => d.dia)))}</div>`;
   h += `<p class="small faint" style="margin:8px 2px 0">Moyennes sur les jours complets suivis (${past.length}). Fenêtre d'éveil et sieste type : ${P.p.wwN ? 'calculées sur ' + P.p.wwN + ' éveils récents, ajustées à l’âge' : 'valeurs de référence pour l’âge'}.</p>`;
   h += `<div class="sec-title"><h3>Détail par jour</h3></div><div class="card" style="padding:8px 12px"><table class="tbl"><thead><tr><th>Jour</th><th>Nuit</th><th>Siestes (nb)</th><th>Repas</th><th>Couches</th></tr></thead><tbody>`
@@ -1508,7 +1752,7 @@ function viewSettings() {
   h += `<div class="sec-title"><h3>Apparence</h3></div><div class="card"><div class="chips">${[['auto', 'Automatique'], ['day', 'Jour'], ['night', 'Nuit']].map(([v, l]) => `<button class="chip" data-act="theme" data-v="${v}" aria-pressed="${S.theme === v}">${l}</button>`).join('')}</div><p class="small muted" style="margin-top:8px">Automatique : thème nuit entre l'heure du coucher et l'heure du réveil.</p></div>`;
   h += `<div class="sec-title"><h3>Partage</h3></div><div class="card">${sync}</div>`;
   h += `<div class="sec-title"><h3>Sauvegarde</h3></div><div class="card"><p class="small muted" style="margin-bottom:10px">Télécharge une sauvegarde de toutes les données (fichier .json), ou restaure-en une.</p><div class="row"><button class="btn" data-act="export-file">Télécharger la sauvegarde</button><button class="btn" data-act="import">Restaurer</button></div><button class="btn block" data-act="import-napper" style="margin-top:8px">Importer un export Napper (CSV)</button></div>`;
-  h += `<p class="foot">Petit Dodo v2.0.2 · DevLabs - A. Giraud<br>Estimations indicatives, elles ne remplacent pas l'avis d'un professionnel de santé.</p>`;
+  h += `<p class="foot">Petit Dodo v2.1 · DevLabs - A. Giraud<br>Estimations indicatives, elles ne remplacent pas l'avis d'un professionnel de santé.</p>`;
   return h;
 }
 
