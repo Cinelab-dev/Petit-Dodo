@@ -809,15 +809,16 @@ function generateReport(now) {
       ensure(215);
       const cx = M + 30, cw = W - 2 * M - 70, ch = 170, cy = y + 12;
       const ages = Wt.map(e => whoAgeDays(e.start));
-      const x1 = Math.max(42, Math.ceil((Math.max(...ages) + 10) / 7) * 7);
+      const x1 = Math.max(42, Math.ceil((Math.max(...ages) + 10) / 7) * 7), x0 = Math.min(0, Math.floor(Math.min(...ages) / 7) * 7);
       let lo = Math.min(...Wt.map(e => e.kg)), hi = Math.max(...Wt.map(e => e.kg));
       const curves = CENTILES.map(([p, z]) => { const pts = []; for (let a = 0; a <= x1; a += Math.max(1, x1 / 80)) { const l = whoLMS('kg', a); if (l) pts.push([a, whoValue(l, z)]); } return [p, pts]; });
       curves.forEach(([, pts]) => pts.forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }));
       lo = Math.floor(lo * 2) / 2; hi = Math.ceil(hi * 2) / 2;
-      const X = a => cx + cw * a / x1, Y = v => cy + ch * (1 - (v - lo) / (hi - lo));
+      const X = a => cx + cw * (a - x0) / (x1 - x0), Y = v => cy + ch * (1 - (v - lo) / (hi - lo));
+      if (x0 < 0) { P.rect(X(x0), cy, X(0) - X(x0), ch, { fill: '#f4f2f9' }); P.text((X(x0) + X(0)) / 2, cy + 10, 'avant terme', { size: 7, color: MUT, align: 'center' }); }
       for (let v = lo; v <= hi + 1e-9; v += 0.5) { P.line(cx, Y(v), cx + cw, Y(v), { color: '#ece8f5', width: 0.5 }); if (Math.abs(v - Math.round(v)) < 1e-9) P.text(cx - 5, Y(v) + 3, numFr(v) + ' kg', { size: 7, color: MUT, align: 'right' }); }
       const step = x1 > 120 ? 28 : 7;
-      for (let a = 0; a <= x1; a += step) { P.line(X(a), cy, X(a), cy + ch, { color: '#f2eff8', width: 0.5 }); P.text(X(a), cy + ch + 11, a === 0 ? 'naiss.' : (step === 7 ? a / 7 + ' sem' : Math.round(a / 30.4) + ' mois'), { size: 7, color: MUT, align: 'center' }); }
+      for (let a = Math.ceil(x0 / step) * step; a <= x1; a += step) { P.line(X(a), cy, X(a), cy + ch, { color: '#f2eff8', width: 0.5 }); P.text(X(a), cy + ch + 11, a === 0 ? (Number(c.premWeeks) ? 'terme' : 'naiss.') : a < 0 ? (step === 7 ? a / 7 + ' sem' : '') : (step === 7 ? a / 7 + ' sem' : Math.round(a / 30.4) + ' mois'), { size: 7, color: MUT, align: 'center' }); }
       curves.forEach(([p, pts]) => { P.poly(pts.map(q => [X(q[0]), Y(q[1])]), { color: p === 50 ? '#9b95b0' : '#c9c4d8', width: p === 50 ? 1 : 0.7, dash: p === 50 ? null : [2, 2] }); const last = pts[pts.length - 1]; P.text(cx + cw + 4, Y(last[1]) + 2.5, 'P' + p, { size: 7, color: MUT }); });
       const sp = Wt.map(e => [X(whoAgeDays(e.start)), Y(e.kg)]);
       P.poly(sp, { color: ACC, width: 1.6 });
@@ -1242,6 +1243,8 @@ function lineChart(pts, dec, label, metric) {
   const W = 320, H = 190, pl = 38, pr = metric ? 26 : 12, pt = 14, pb = 26;
   const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
   const x1 = Math.max(28, Math.ceil((Math.max(...xs) + 8) / 7) * 7);
+  const x0 = Math.min(0, Math.floor(Math.min(...xs) / 7) * 7); // avant le terme (prématuré) : zone à gauche, sans courbes OMS
+  const corr = (Number(cfg().premWeeks) || 0) > 0;
   let lo = Math.min(...ys), hi = Math.max(...ys);
   let curves = [];
   if (metric && birthTime() != null && (cfg().sex === 'M' || cfg().sex === 'F')) {
@@ -1251,11 +1254,12 @@ function lineChart(pts, dec, label, metric) {
   const minSpan = dec >= 2 ? 0.6 : 3;
   if (hi - lo < minSpan) { const m = (hi + lo) / 2; lo = m - minSpan / 2; hi = m + minSpan / 2; }
   const pad = (hi - lo) * 0.12; lo -= pad; hi += pad;
-  const X = x => pl + (W - pl - pr) * (x / x1), Y = y => pt + (H - pt - pb) * (1 - (y - lo) / (hi - lo));
-  let g = '';
+  const X = x => pl + (W - pl - pr) * ((x - x0) / (x1 - x0)), Y = y => pt + (H - pt - pb) * (1 - (y - lo) / (hi - lo));
+  const pre = x0 < 0 ? `<rect x="${X(x0).toFixed(1)}" y="${pt}" width="${(X(0) - X(x0)).toFixed(1)}" height="${H - pt - pb}" fill="var(--surface2)"/><text x="${((X(x0) + X(0)) / 2).toFixed(1)}" y="${pt + 11}" text-anchor="middle" font-size="8.5" fill="var(--faint)">avant terme</text><line x1="${X(0).toFixed(1)}" x2="${X(0).toFixed(1)}" y1="${pt}" y2="${H - pb}" stroke="var(--faint)" stroke-width="1"/>` : '';
+  let g = pre;
   for (let i = 0; i <= 4; i++) { const v = lo + (hi - lo) * i / 4; g += `<line x1="${pl}" x2="${W - pr}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="var(--border)"/><text x="${pl - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="var(--faint)">${numFr(v, dec >= 2 || hi - lo < 8 ? 1 : 0)}</text>`; }
-  const weeks = x1 / 7, step = Math.max(1, Math.ceil(weeks / 6));
-  for (let w = 0; w <= weeks; w += step) g += `<text x="${X(w * 7).toFixed(1)}" y="${H - 8}" text-anchor="middle" font-size="10" fill="var(--muted)">${w === 0 ? 'naiss.' : w + ' sem'}</text>`;
+  const weeks = x1 / 7, step = Math.max(1, Math.ceil((x1 - x0) / 7 / 6));
+  for (let w = Math.ceil(x0 / 7 / step) * step; w <= weeks; w += step) g += `<text x="${X(w * 7).toFixed(1)}" y="${H - 8}" text-anchor="middle" font-size="10" fill="var(--muted)">${w === 0 ? (corr ? 'terme' : 'naiss.') : w + ' sem'}</text>`;
   curves.forEach(cv => {
     const d = cv.c.map((q, i) => (i ? 'L' : 'M') + X(q.x).toFixed(1) + ' ' + Y(q.y).toFixed(1)).join(' ');
     g += `<path d="${d}" fill="none" stroke="var(--faint)" stroke-width="${cv.p === 50 ? 1.4 : 1}" ${cv.p === 50 ? '' : 'stroke-dasharray="3 3"'} opacity="${cv.p === 50 ? .9 : .7}"/>`;
@@ -1272,7 +1276,7 @@ function viewGrowth(now) {
   let h = `<div class="top"><h1>Statistiques</h1><button class="btn" data-act="add-measure">+ Mesure</button></div>` + statsTabs();
   if (!ms.length) return h + `<div class="card empty"><span class="em">⚖️</span>Aucune mesure pour l'instant.<br><button class="btn primary" data-act="add-measure" style="margin-top:12px">Ajouter une mesure</button></div>`;
   const c = cfg(), birthT = c.birth ? new Date(c.birth + 'T12:00').getTime() : ms[0].start;
-  const pt = (e, k) => ({ x: Math.max(0, birthTime() != null ? whoAgeDays(e.start) : (e.start - birthT) / DAY), y: e[k], t: e.start });
+  const pt = (e, k) => ({ x: birthTime() != null ? whoAgeDays(e.start) : Math.max(0, (e.start - birthT) / DAY), y: e[k], t: e.start });
   const cen = (metric, e) => { const x = whoCentile(metric, e); return x ? ' · ' + centileText(x) : ''; };
   const W = ms.filter(m => m.kg), L = ms.filter(m => m.height), P = ms.filter(m => m.head);
   const dshort = t => new Date(t).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
@@ -1296,7 +1300,7 @@ function viewGrowth(now) {
   h += `<div class="sec-title"><h3>Toutes les mesures</h3></div><div class="card" style="padding:4px 14px"><ul class="list">` + [...ms].reverse().map(e =>
     `<li><button class="rowbtn" data-act="edit" data-id="${esc(e.id)}"><span class="ic c-growth">⚖️</span><span class="main"><span class="ttl">${growthParts(e).join(' · ')}</span><br><span class="sub">${cap(new Date(e.start).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }))}</span></span></button></li>`).join('') + `</ul></div>`;
   const pw = Number(c.premWeeks) || 0;
-  h += `<p class="small faint" style="margin:8px 2px 0">${birthTime() != null && !(cfg().sex === 'M' || cfg().sex === 'F') ? 'Indique le sexe du bébé dans les réglages pour afficher les courbes OMS. ' : ''}${birthTime() != null && (cfg().sex === 'M' || cfg().sex === 'F') ? `Pointillés : courbes de référence ${whoLabel()} (P3, P15, P50 en trait plein, P85, P97)${pw ? `, en âge corrigé (${gx('né', 'née')} à ${c.gaWeeks} SA)` : ''}. Un bébé né petit ou avant terme suit souvent sa propre courbe : c'est la régularité de la progression qui compte, et le pédiatre est le mieux placé pour l'interpréter.` : 'Ajoute la date de naissance dans les réglages pour afficher les courbes OMS.'}</p>`;
+  h += `<p class="small faint" style="margin:8px 2px 0">${birthTime() != null && !(cfg().sex === 'M' || cfg().sex === 'F') ? 'Indique le sexe du bébé dans les réglages pour afficher les courbes OMS. ' : ''}${birthTime() != null && (cfg().sex === 'M' || cfg().sex === 'F') ? `Pointillés : courbes de référence ${whoLabel()} (P3, P15, P50 en trait plein, P85, P97)${pw ? `, en âge corrigé (${gx('né', 'née')} à ${c.gaWeeks} SA) ; la zone grisée « avant terme » regroupe les mesures prises avant 40 SA, où les courbes OMS ne s'appliquent pas encore` : ''}. Un bébé né petit ou avant terme suit souvent sa propre courbe : c'est la régularité de la progression qui compte, et le pédiatre est le mieux placé pour l'interpréter.` : 'Ajoute la date de naissance dans les réglages pour afficher les courbes OMS.'}</p>`;
   return h;
 }
 function viewStats(now) {
@@ -1504,7 +1508,7 @@ function viewSettings() {
   h += `<div class="sec-title"><h3>Apparence</h3></div><div class="card"><div class="chips">${[['auto', 'Automatique'], ['day', 'Jour'], ['night', 'Nuit']].map(([v, l]) => `<button class="chip" data-act="theme" data-v="${v}" aria-pressed="${S.theme === v}">${l}</button>`).join('')}</div><p class="small muted" style="margin-top:8px">Automatique : thème nuit entre l'heure du coucher et l'heure du réveil.</p></div>`;
   h += `<div class="sec-title"><h3>Partage</h3></div><div class="card">${sync}</div>`;
   h += `<div class="sec-title"><h3>Sauvegarde</h3></div><div class="card"><p class="small muted" style="margin-bottom:10px">Télécharge une sauvegarde de toutes les données (fichier .json), ou restaure-en une.</p><div class="row"><button class="btn" data-act="export-file">Télécharger la sauvegarde</button><button class="btn" data-act="import">Restaurer</button></div><button class="btn block" data-act="import-napper" style="margin-top:8px">Importer un export Napper (CSV)</button></div>`;
-  h += `<p class="foot">Petit Dodo v2.0.1 · DevLabs - A. Giraud<br>Estimations indicatives, elles ne remplacent pas l'avis d'un professionnel de santé.</p>`;
+  h += `<p class="foot">Petit Dodo v2.0.2 · DevLabs - A. Giraud<br>Estimations indicatives, elles ne remplacent pas l'avis d'un professionnel de santé.</p>`;
   return h;
 }
 
