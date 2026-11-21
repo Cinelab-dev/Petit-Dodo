@@ -1,11 +1,11 @@
 rules_version = '2';
 // Petit Dodo — seules les adresses de la famille peuvent lire et écrire.
-// Remplace les deux adresses ci-dessous par les vôtres (celles créées dans Authentication).
+// Adresses autorisées : celles créées dans Authentication.
 service cloud.firestore {
   match /databases/{database}/documents {
     function famille() {
       return request.auth != null
-        && request.auth.token.email in ['amaury@exemple.fr', 'marilyn@exemple.fr'];
+        && request.auth.token.email in ['amaury.gir@icloud.com', 'marilyngd@free.fr'];
     }
     match /{document=**} {
       allow read, write: if famille();

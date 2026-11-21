@@ -427,7 +427,9 @@ async function init() {
     let fs;
     try { fs = fsM.initializeFirestore(app, { localCache: fsM.persistentLocalCache({ tabManager: fsM.persistentMultipleTabManager() }) }); }
     catch (e) { fs = fsM.getFirestore(app); }
-    AUTH = authM.getAuth(app);
+    // Session mémorisée sur le téléphone : IndexedDB, avec localStorage en secours (utile sur iPhone en mode « écran d'accueil »)
+    try { AUTH = authM.initializeAuth(app, { persistence: [authM.indexedDBLocalPersistence, authM.browserLocalPersistence] }); }
+    catch (e) { AUTH = authM.getAuth(app); }
     try { AUTH.languageCode = 'fr'; } catch (e) {}
     authM.onAuthStateChanged(AUTH, u => {
       if (u) { S.me = u.uid; S.userEmail = u.email || ''; if (!DB) { DB = makeDb(fs, fsM); S.mode = 'sync'; subscribe(); registerMember(u); } }
@@ -1502,7 +1504,7 @@ function viewSettings() {
   h += `<div class="sec-title"><h3>Apparence</h3></div><div class="card"><div class="chips">${[['auto', 'Automatique'], ['day', 'Jour'], ['night', 'Nuit']].map(([v, l]) => `<button class="chip" data-act="theme" data-v="${v}" aria-pressed="${S.theme === v}">${l}</button>`).join('')}</div><p class="small muted" style="margin-top:8px">Automatique : thème nuit entre l'heure du coucher et l'heure du réveil.</p></div>`;
   h += `<div class="sec-title"><h3>Partage</h3></div><div class="card">${sync}</div>`;
   h += `<div class="sec-title"><h3>Sauvegarde</h3></div><div class="card"><p class="small muted" style="margin-bottom:10px">Télécharge une sauvegarde de toutes les données (fichier .json), ou restaure-en une.</p><div class="row"><button class="btn" data-act="export-file">Télécharger la sauvegarde</button><button class="btn" data-act="import">Restaurer</button></div><button class="btn block" data-act="import-napper" style="margin-top:8px">Importer un export Napper (CSV)</button></div>`;
-  h += `<p class="foot">Petit Dodo v2.0 · DevLabs - A. Giraud<br>Estimations indicatives, elles ne remplacent pas l'avis d'un professionnel de santé.</p>`;
+  h += `<p class="foot">Petit Dodo v2.0.1 · DevLabs - A. Giraud<br>Estimations indicatives, elles ne remplacent pas l'avis d'un professionnel de santé.</p>`;
   return h;
 }
 
