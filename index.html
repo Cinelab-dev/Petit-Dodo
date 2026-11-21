@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ece7fb">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Petit Dodo">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script src="firebase-config.js"></script>
+<title>Petit Dodo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="day"]{
+  --bg:#fbf7f2;--bg2:#ece7fb;--surface:#ffffff;--surface2:#f6f2fb;--border:#ebe5f3;
+  --text:#3a3450;--muted:#7a7391;--faint:#a9a2bb;
+  --accent:#7b68e0;--on-accent:#ffffff;
+  --sleep:#9d8cf2;--sleep2:#6f60d4;--sleep-soft:#efebff;
+  --feed:#f3a07a;--feed-soft:#ffefe6;--bottle:#ecbd52;--bottle-soft:#fff6de;
+  --diaper:#62c3a3;--diaper-soft:#e3f6ef;--note:#74a9e6;--note-soft:#e7f1fd;
+  --ok:#62c3a3;--warn:#ecbd52;--hot:#f0907a;--danger:#d9586f;
+  --shadow:0 8px 28px rgba(96,80,160,.08),0 1px 3px rgba(96,80,160,.05);
+  --scrim:rgba(58,52,80,.28);
+  color-scheme:light;
+}
+[data-theme="night"]{
+  --bg:#13132e;--bg2:#24224f;--surface:#1d1d40;--surface2:#272652;--border:#32315e;
+  --text:#f1efff;--muted:#aeaad3;--faint:#78759f;
+  --accent:#b4a8ff;--on-accent:#1b173d;
+  --sleep:#b4a8ff;--sleep2:#7c6ee2;--sleep-soft:#2e2b63;
+  --feed:#ffb795;--feed-soft:#3a2c45;--bottle:#ffd77e;--bottle-soft:#373448;
+  --diaper:#86dcc0;--diaper-soft:#203f48;--note:#a0c8ff;--note-soft:#233459;
+  --ok:#86dcc0;--warn:#ffd77e;--hot:#ff9f8a;--danger:#ff8095;
+  --shadow:0 8px 28px rgba(0,0,0,.25);
+  --scrim:rgba(6,6,24,.6);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg)}
+body{color:var(--text);font-family:'Nunito',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.5;min-height:100vh;padding-top:env(safe-area-inset-top);
+  background:linear-gradient(180deg,var(--bg2) 0,var(--bg) 420px) no-repeat,var(--bg);transition:background-color .4s ease}
+[data-theme="night"] body{background:
+  radial-gradient(1.5px 1.5px at 12% 6%,rgba(255,255,255,.55) 50%,transparent 51%),
+  radial-gradient(1px 1px at 32% 14%,rgba(255,255,255,.45) 50%,transparent 51%),
+  radial-gradient(1.5px 1.5px at 58% 4%,rgba(255,255,255,.5) 50%,transparent 51%),
+  radial-gradient(1px 1px at 76% 17%,rgba(255,255,255,.4) 50%,transparent 51%),
+  radial-gradient(1px 1px at 90% 9%,rgba(255,255,255,.5) 50%,transparent 51%),
+  linear-gradient(180deg,var(--bg2) 0,var(--bg) 420px) no-repeat,var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
+.app{max-width:520px;margin:0 auto;padding:12px 18px calc(112px + env(safe-area-inset-bottom))}
+h1,h2,h3,.serif{font-family:'Quicksand','Nunito',sans-serif;font-weight:700;letter-spacing:-.01em}
+h1{font-size:28px;line-height:1.15}
+h2{font-size:20px;line-height:1.25}
+h3{font-size:16px}
+.muted{color:var(--muted)}
+.faint{color:var(--faint)}
+.small{font-size:13px}
+.top{display:flex;align-items:center;justify-content:space-between;margin:10px 2px 18px;gap:12px}
+.top .age{color:var(--muted);font-size:14px;font-weight:600}
+.hello{display:flex;align-items:center;gap:14px}
+.deco{width:60px;height:60px;flex:0 0 60px}
+.agepill{display:inline-block;margin-top:4px;padding:2px 10px;border-radius:999px;background:var(--sleep-soft);color:var(--accent);font-size:12.5px;font-weight:700}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.sec-title{display:flex;justify-content:space-between;align-items:baseline;margin:22px 4px 10px}
+.sec-title h3{font-size:17px}
+.banner{border-radius:16px;padding:10px 14px;font-size:14px;margin-bottom:12px;background:var(--surface2);color:var(--muted)}
+.banner.warn{background:var(--bottle-soft);color:var(--text)}
+
+/* Status */
+.status{display:flex;gap:18px;align-items:center;padding:20px}
+.status.awake{background:linear-gradient(150deg,var(--surface) 40%,var(--diaper-soft))}
+.status.due{background:linear-gradient(150deg,var(--surface) 40%,var(--feed-soft))}
+.sleeping{background:linear-gradient(150deg,var(--sleep-soft),var(--surface) 75%)}
+.ring{position:relative;width:132px;height:132px;flex:0 0 132px}
+.ringsvg{width:132px;height:132px}
+.ringsvg .track{fill:none;stroke:var(--border);stroke-width:9}
+.ringsvg .prog{fill:none;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset .8s ease,stroke .8s ease}
+.ring-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ring-in .lbl{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.ring-in .big{font-family:'Quicksand',sans-serif;font-weight:700;font-size:25px;font-variant-numeric:tabular-nums}
+.st-txt{flex:1;min-width:0}
+.st-txt h2{margin-bottom:2px}
+.st-txt p{font-size:14px;margin-bottom:2px}
+.st-txt .when{font-family:'Quicksand',sans-serif;font-weight:700;font-size:30px;overflow-wrap:anywhere;line-height:1.1;margin:2px 0 4px;color:var(--accent)}
+.st-txt .btn{margin-top:12px}
+.link{color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-size:inherit;padding:0;font-weight:700}
+.breathe{animation:breathe 5s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:999px;background:var(--surface2);border:1px solid var(--border);font-weight:800;font-size:15px;transition:transform .15s ease}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:transparent;box-shadow:0 6px 18px rgba(123,104,224,.28)}
+[data-theme="night"] .btn.primary{box-shadow:none}
+.btn.feed{background:var(--feed);color:#3a1d0d;border-color:transparent}
+.btn.danger{color:var(--danger);background:transparent;border-color:var(--border)}
+.btn.danger.armed{background:var(--danger);color:#fff}
+.btn.block{width:100%}
+.btn:active{transform:scale(.97)}
+
+/* Quick actions */
+.actions{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:6px 0 16px}
+.qa{display:flex;flex-direction:column;align-items:center;gap:7px;padding:4px 0;min-height:84px}
+.qa .em{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;line-height:1;box-shadow:var(--shadow);transition:transform .2s ease}
+.qa:active .em{transform:scale(.92)}
+.qa span:last-child{font-size:12.5px;font-weight:700;color:var(--muted)}
+.qa[data-act="sleep"] .em{background:var(--sleep-soft)}
+.qa[data-act="feed"] .em{background:var(--feed-soft)}
+.qa[data-act="bottle"] .em{background:var(--bottle-soft)}
+.qa[data-act="diaper"] .em{background:var(--diaper-soft)}
+.qa[data-act="note"] .em{background:var(--note-soft)}
+.qa.on .em{outline:2.5px solid var(--accent);outline-offset:3px}
+.qa.on span:last-child{color:var(--accent)}
+
+.running{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--feed-soft);border-color:transparent}
+.running .t{flex:1;min-width:150px;font-weight:600}
+.running .t b{font-variant-numeric:tabular-nums}
+
+.info-row{display:flex;gap:10px}
+.info{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:12px 14px;box-shadow:var(--shadow)}
+.info .k{font-size:12.5px;color:var(--muted)}
+.info .v{font-weight:800;font-size:15.5px}
+
+/* Strip */
+.strip{position:relative;height:40px;border-radius:14px;background:var(--surface2);overflow:hidden;margin:2px 0 6px}
+.strip .blk{position:absolute;top:7px;bottom:7px;border-radius:8px;background:var(--sleep)}
+.strip .blk.night{background:var(--sleep2)}
+.strip .blk.pred{background:transparent;border:1.5px dashed var(--sleep)}
+.strip .tick{position:absolute;top:3px;width:3px;height:8px;border-radius:2px}
+.strip .dot{position:absolute;bottom:3px;width:6px;height:6px;border-radius:50%;background:var(--diaper);margin-left:-3px}
+.strip .now{position:absolute;top:0;bottom:0;width:2px;background:var(--text);opacity:.55}
+.strip .bed{position:absolute;top:5px;bottom:5px;width:3px;margin-left:-1px;background:var(--feed);border-radius:2px}
+.hours{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);padding:0 1px;font-weight:600}
+
+/* Lists */
+.list{list-style:none}
+.list li{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.list li:last-child{border-bottom:0}
+.list .ic{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--sleep-soft);flex:0 0 40px}
+.list .main{flex:1;min-width:0}
+.list .ttl{font-weight:800;font-size:15px}
+.list .sub{font-size:13px;color:var(--muted)}
+.list .tm{font-variant-numeric:tabular-nums;font-size:14px;color:var(--muted);text-align:right;font-weight:700}
+.list li.pred .ic{background:transparent;border:1.5px dashed var(--sleep)}
+.list li.pred .ttl{color:var(--accent)}
+.list button.rowbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left}
+.who{font-size:11px;font-weight:800;color:var(--accent);background:var(--sleep-soft);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:1px}
+.dayhead{font-family:'Quicksand',sans-serif;font-weight:700;font-size:15px;color:var(--muted);margin:18px 4px 8px}
+.c-sleep{background:var(--sleep-soft)!important}
+.c-feed{background:var(--feed-soft)!important}
+.c-bottle{background:var(--bottle-soft)!important}
+.c-diaper{background:var(--diaper-soft)!important}
+.c-note{background:var(--note-soft)!important}
+.c-bath{background:var(--note-soft)!important}
+.c-med{background:var(--feed-soft)!important}
+.c-growth{background:var(--diaper-soft)!important}
+.c-temp{background:var(--feed-soft)!important}
+.c-visit{background:var(--note-soft)!important}
+.alert{background:var(--feed-soft);border-color:transparent}
+.alert b{color:var(--text)}
+.upcoming{display:flex;align-items:center;gap:12px;background:var(--note-soft);border-color:transparent}
+.upcoming .ic{font-size:24px}
+.reportbtn{margin:0 0 14px}
+.tabs{display:flex;gap:6px;padding:4px;border-radius:18px;background:var(--surface2);margin:0 0 14px}
+.tabs button{flex:1;min-height:42px;border-radius:14px;font-weight:800;font-size:14.5px;color:var(--muted)}
+.tabs button[aria-pressed="true"]{background:var(--surface);color:var(--accent);box-shadow:var(--shadow)}
+.qa[data-act="more"] .em{background:var(--note-soft)}
+.gchart svg{width:100%;height:auto;display:block}
+.gchart h3{margin-bottom:6px}
+
+/* Stats */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:14px;box-shadow:var(--shadow)}
+.kpi .k{font-size:12.5px;color:var(--muted);font-weight:600}
+.kpi .v{font-family:'Quicksand',sans-serif;font-weight:700;font-size:24px}
+.chart svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--muted);margin-top:6px;font-weight:600}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th,.tbl td{padding:8px 4px;white-space:nowrap;text-align:right;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums}
+.tbl tr:last-child td{border-bottom:0}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl th{color:var(--muted);font-weight:700;font-size:12px}
+
+/* Sounds */
+.sounds{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.snd{display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;background:var(--surface);border:1px solid var(--border);text-align:left;min-height:66px;box-shadow:var(--shadow)}
+.snd .em{width:38px;height:38px;border-radius:50%;background:var(--sleep-soft);display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 38px}
+.snd .nm{font-weight:800;font-size:14px;line-height:1.2}
+.snd.on{border-color:var(--accent);background:var(--sleep-soft)}
+.snd.on .em{background:var(--surface)}
+.snd.on .nm{color:var(--accent)}
+.player{display:flex;flex-direction:column;gap:14px;background:linear-gradient(150deg,var(--sleep-soft),var(--surface) 80%)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{min-height:38px;padding:0 15px;border-radius:999px;border:1px solid var(--border);background:var(--surface);font-size:14px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:transparent}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.wave{display:flex;align-items:flex-end;gap:3px;height:22px}
+.wave i{width:4px;border-radius:2px;background:var(--accent);animation:wv 1.4s ease-in-out infinite}
+.wave i:nth-child(2){animation-delay:.2s}.wave i:nth-child(3){animation-delay:.4s}.wave i:nth-child(4){animation-delay:.6s}
+@keyframes wv{0%,100%{height:6px}50%{height:20px}}
+
+/* Forms */
+.field{display:block;margin-bottom:12px}
+.field>span{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:700}
+.field input,.field select,.field textarea{width:100%;min-height:48px;padding:10px 14px;border-radius:16px;border:1px solid var(--border);background:var(--surface2);font-size:16px}
+.field input,.field select{max-width:100%;min-width:0;-webkit-appearance:none;appearance:none;text-align:left}
+.field input::-webkit-date-and-time-value{text-align:left}
+.row>.field{min-width:0}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)}
+.field textarea{min-height:90px;resize:vertical}
+.seg{display:flex;gap:6px;margin-bottom:12px;padding:4px;border-radius:18px;background:var(--surface2)}
+.seg label{flex:1}
+.seg label{position:relative}
+.seg input,.field .seg input{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;min-height:0;padding:0;border:0;left:0;top:0}
+.seg span{display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:14px;font-weight:800;font-size:14.5px;text-align:center;padding:0 6px;color:var(--muted);transition:background .2s ease}
+.seg input:checked+span{background:var(--surface);color:var(--accent);box-shadow:var(--shadow)}
+.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.hint{font-size:13px;color:var(--faint);margin:-4px 0 12px}
+.err{color:var(--danger);font-size:14px;margin-bottom:8px;font-weight:600}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row .btn{flex:1}
+.bigchoice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.bigchoice.three{grid-template-columns:1fr 1fr 1fr}
+.bigchoice button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:104px;border-radius:22px;background:var(--surface2);border:1.5px solid transparent;font-weight:800}
+.bigchoice button .em{font-size:30px}
+.bigchoice button.sug{border-color:var(--feed);background:var(--feed-soft)}
+.bigchoice button small{font-weight:700;color:var(--feed);font-size:12px}
+
+/* Sheet */
+#sheet{position:fixed;inset:0;z-index:50;display:none}
+#sheet.open{display:block}
+#sheet .scrim{position:absolute;inset:0;background:var(--scrim);animation:fade .2s ease-out}
+#sheet .panel{position:absolute;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;background:var(--surface);border-radius:30px 30px 0 0;padding:10px 20px calc(22px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto;animation:up .28s cubic-bezier(.2,.8,.2,1);box-shadow:0 -10px 40px rgba(40,30,90,.15)}
+#sheet .grab{width:42px;height:5px;border-radius:3px;background:var(--border);margin:0 auto 14px}
+#sheet h2{margin-bottom:12px}
+@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+/* Nav */
+.nav{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:40;max-width:496px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:26px;box-shadow:0 10px 34px rgba(60,45,130,.14)}
+[data-theme="night"] .nav{box-shadow:0 10px 34px rgba(0,0,0,.4)}
+.nav .in{display:grid;grid-template-columns:repeat(5,1fr);padding:6px}
+.nav button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 6px;font-size:11px;font-weight:800;color:var(--faint);min-height:54px;border-radius:20px;transition:background .2s ease,color .2s ease}
+.nav button svg{width:22px;height:22px}
+.nav button[aria-current="page"]{color:var(--accent);background:var(--sleep-soft)}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--text);color:var(--bg);font-weight:800;font-size:14px;padding:11px 18px;border-radius:999px;z-index:60;max-width:90vw;text-align:center;box-shadow:0 8px 26px rgba(0,0,0,.2);animation:up .25s ease}
+.empty{text-align:center;padding:26px 12px;color:var(--muted)}
+.empty .em{font-size:36px;display:block;margin-bottom:8px}
+.foot{text-align:center;color:var(--faint);font-size:12.5px;margin-top:26px}
+.skel{height:160px;border-radius:24px;background:var(--surface);border:1px solid var(--border);margin-bottom:14px;animation:breathe 1.6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app"><main id="main" aria-live="polite"></main></div>
+
+<nav class="nav" aria-label="Navigation"><div class="in">
+  <button data-tab="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>Aujourd'hui</button>
+  <button data-tab="journal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>Journal</button>
+  <button data-tab="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>Stats</button>
+  <button data-tab="sounds"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h2M7 8v8M11 5v14M15 9v6M19 11v2"/></svg>Sons</button>
+  <button data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Réglages</button>
+</div></nav>
+
+<div id="sheet"></div>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+/* Petit Dodo — DevLabs - A. Giraud */
+'use strict';
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const MIN = 60000, HR = 3600000, DAY = 86400000;
+const pad = n => String(n).padStart(2, '0');
+const dayKey = t => { const d = new Date(t); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+const startOfDay = t => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
+const hm = t => { const d = new Date(t); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const dur = ms => { const m = Math.round(Math.max(0, ms) / MIN); if (m < 60) return m + ' min'; const h = Math.floor(m / 60), r = m % 60; return h + ' h' + (r ? ' ' + pad(r) : ''); };
+const durClock = ms => { const s = Math.max(0, Math.floor(ms / 1000)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ':' + pad(m) : m) + ':' + pad(x); };
+const parseHM = s => { const p = String(s || '0:0').split(':').map(Number); return (p[0] || 0) * 60 + (p[1] || 0); };
+const atDay = (hmStr, base) => startOfDay(base) + parseHM(hmStr) * MIN;
+const minutesOf = t => { const d = new Date(t); return d.getHours() * 60 + d.getMinutes(); };
+const toInput = t => { const d = new Date(t); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const fromInput = v => v ? new Date(v).getTime() : null;
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const median = a => { if (!a.length) return null; const b = [...a].sort((x, y) => x - y), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; };
+const overlap = (a0, a1, b0, b1) => Math.max(0, Math.min(a1, b1) - Math.max(a0, b0));
+
+function dayLabel(key) {
+  const today = dayKey(Date.now()), yest = dayKey(Date.now() - DAY);
+  if (key === today) return "Aujourd'hui";
+  if (key === yest) return 'Hier';
+  return cap(new Date(key + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }));
+}
+
+/* ---------- State ---------- */
+const S = { days: new Map(), measures: new Map(), statsTab: 'sleep', events: [], config: null, configLoaded: false, me: null, mode: 'loading', tab: 'home',
+  profiles: {}, netWarn: false, dbError: null, canWrite: null, journalDays: 7, onboardShown: false, settingsDirty: false };
+const DEFAULT_CFG = { babyName: 'Bébé', birth: '', wakeTime: '07:00', bedtime: '19:30' };
+const cfg = () => Object.assign({}, DEFAULT_CFG, S.config || {});
+try { S.theme = localStorage.getItem('petitdodo.theme') || 'auto'; } catch (e) { S.theme = 'auto'; }
+function resolvedTheme() {
+  if (S.theme === 'day' || S.theme === 'night') return S.theme;
+  const c = cfg(), m = minutesOf(Date.now());
+  return (m >= parseHM(c.bedtime) || m < parseHM(c.wakeTime)) ? 'night' : 'day';
+}
+function applyTheme() {
+  const t = resolvedTheme(), r = document.documentElement;
+  if (r.dataset.theme !== t) { r.dataset.theme = t; const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = t === 'night' ? '#24224f' : '#ece7fb'; }
+}
+const DECO_DAY = '<svg class="deco" viewBox="0 0 64 64" aria-hidden="true"><circle cx="38" cy="24" r="13" fill="var(--bottle)"/><path d="M13 45a9.5 9.5 0 0 1 10-10.5 13 13 0 0 1 24.5 3A8 8 0 0 1 47 53H20a8 8 0 0 1-7-8z" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/></svg>';
+const DECO_NIGHT = '<svg class="deco" viewBox="0 0 64 64" aria-hidden="true"><mask id="crescent"><rect width="64" height="64" fill="#fff"/><circle cx="41" cy="24" r="15" fill="#000"/></mask><circle cx="31" cy="33" r="19" fill="var(--bottle)" mask="url(#crescent)"/><circle cx="49" cy="14" r="1.8" fill="var(--text)" opacity=".85"/><circle cx="55" cy="30" r="1.3" fill="var(--text)" opacity=".7"/><circle cx="44" cy="6" r="1.1" fill="var(--text)" opacity=".6"/></svg>';
+
+/* ---------- Stockage : Firebase (synchronisé) ou local (repli) ---------- */
+let DB = null, AUTH = null, FBM = null, writeChain = Promise.resolve();
+const LS_KEY = 'petitdodo.v1';
+const FB_VER = '10.12.2';
+function queue(fn) { const p = writeChain.then(fn); writeChain = p.catch(() => {}); return p; }
+function errMsg(e) {
+  const c = e && e.code;
+  if (c === 'permission-denied') return "Accès refusé : ton adresse n'est pas autorisée dans les règles Firebase.";
+  if (c === 'resource-exhausted') return 'Quota Firebase atteint pour aujourd’hui. Réessaie plus tard.';
+  if (c === 'unavailable') return 'Hors connexion : ce sera synchronisé au retour du réseau.';
+  return 'Enregistrement impossible pour le moment. Réessaie.';
+}
+function localLoad() {
+  try { const j = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); S.days = new Map(Object.entries(j.days || {})); S.measures = new Map(Object.entries(j.measures || {})); S.config = j.config || null; } catch (e) {}
+  S.configLoaded = true;
+}
+function localSave() { try { localStorage.setItem(LS_KEY, JSON.stringify({ days: Object.fromEntries(S.days), measures: Object.fromEntries(S.measures), config: S.config })); } catch (e) {} }
+
+// Petite couche qui donne à Firestore la même forme que le reste du code attend
+function makeDb(fs, m) {
+  const snapDoc = s => ({ id: s.id, exists: s.exists(), data: () => s.data(), metadata: s.metadata });
+  const wrapQuery = q => ({
+    onSnapshot: (next, err) => m.onSnapshot(q, s => next({ docs: s.docs.map(snapDoc), size: s.size, empty: s.empty, metadata: s.metadata }), err),
+    get: () => m.getDocs(q).then(s => ({ docs: s.docs.map(snapDoc), size: s.size, empty: s.empty, metadata: s.metadata }))
+  });
+  return {
+    doc(path) {
+      const r = m.doc(fs, path);
+      return { get: () => m.getDoc(r).then(snapDoc), set: d => m.setDoc(r, d), merge: d => m.setDoc(r, d, { merge: true }), delete: () => m.deleteDoc(r), onSnapshot: (n, e) => m.onSnapshot(r, s => n(snapDoc(s)), e) };
+    },
+    collection(path) {
+      const c = m.collection(fs, path), w = wrapQuery(c);
+      w.where = (f, op, v) => wrapQuery(m.query(c, m.where(f, op, v)));
+      return w;
+    },
+    del: () => m.deleteField()
+  };
+}
+
+function rebuild() {
+  const out = [];
+  for (const [k, doc] of S.days) {
+    const evs = (doc && doc.events) || {};
+    for (const id in evs) { const e = evs[id]; if (e && e.type && typeof e.start === 'number') out.push(Object.assign({}, e, { id, day: k })); }
+  }
+  for (const [id, m] of S.measures) if (m && typeof m.start === 'number') out.push(Object.assign({}, m, { type: 'growth', id, day: null }));
+  out.sort((a, b) => a.start - b.start);
+  S.events = out;
+  render();
+}
+
+const FIELDS = ['type', 'start', 'end', 'side', 'ml', 'milk', 'kind', 'text', 'night', 'min', 'c', 'notes', 'by', 'at'];
+const MFIELDS = ['start', 'kg', 'height', 'head', 'by', 'at'];
+// Les mesures de croissance vivent dans leur propre collection : tout l'historique reste visible.
+async function putMeasure(ev) {
+  const clean = {};
+  for (const k of MFIELDS) if (ev[k] !== undefined && ev[k] !== null) clean[k] = ev[k];
+  if (!DB) { S.measures.set(ev.id, clean); localSave(); rebuild(); return; }
+  return queue(() => DB.doc('measures/' + ev.id).set(clean)).catch(err => toast(errMsg(err)));
+}
+async function putEvent(ev) {
+  if (ev.type === 'growth') return putMeasure(ev);
+  const clean = {};
+  for (const k of FIELDS) if (ev[k] !== undefined) clean[k] = ev[k];
+  if ((ev.type === 'sleep' || ev.type === 'feed') && clean.end === undefined) clean.end = null;
+  const day = dayKey(ev.start), oldDay = ev.day;
+  if (oldDay && oldDay !== day) await delEvent({ id: ev.id, day: oldDay });
+  if (!DB) {
+    const d = S.days.get(day) || { day, events: {} };
+    S.days.set(day, { day, events: Object.assign({}, d.events, { [ev.id]: clean }) });
+    localSave(); rebuild(); return;
+  }
+  return queue(() => DB.doc('days/' + day).merge({ day, events: { [ev.id]: clean } })).catch(err => toast(errMsg(err)));
+}
+async function delEvent(ev) {
+  if (ev.type === 'growth') {
+    if (!DB) { S.measures.delete(ev.id); localSave(); rebuild(); return; }
+    return queue(() => DB.doc('measures/' + ev.id).delete()).catch(err => toast(errMsg(err)));
+  }
+  const day = ev.day || dayKey(ev.start);
+  if (!DB) {
+    const d = S.days.get(day);
+    if (d) { const e = Object.assign({}, d.events); delete e[ev.id]; S.days.set(day, { day, events: e }); localSave(); rebuild(); }
+    return;
+  }
+  return queue(() => DB.doc('days/' + day).merge({ events: { [ev.id]: DB.del() } })).catch(err => toast(errMsg(err)));
+}
+async function saveConfig(c) {
+  S.config = c; render();
+  if (!DB) { localSave(); return; }
+  return queue(() => DB.doc('config/main').set(c)).catch(err => toast(errMsg(err)));
+}
+
+function fbConfigured() { const c = window.FIREBASE_CONFIG; return !!(c && c.apiKey && !/COLLE|XXXX/i.test(c.apiKey) && c.projectId); }
+async function init() {
+  render();
+  registerSW();
+  let forceLocal = false; try { forceLocal = localStorage.getItem('petitdodo.mode') === 'local'; } catch (e) {}
+  if (forceLocal || !fbConfigured()) { S.mode = fbConfigured() ? 'local' : 'setup'; if (S.mode === 'local') { localLoad(); rebuild(); } else render(); return; }
+  try {
+    const base = 'https://www.gstatic.com/firebasejs/' + FB_VER + '/';
+    const [appM, authM, fsM] = await Promise.all([import(base + 'firebase-app.js'), import(base + 'firebase-auth.js'), import(base + 'firebase-firestore.js')]);
+    FBM = { app: appM, auth: authM, fs: fsM };
+    const app = appM.initializeApp(window.FIREBASE_CONFIG);
+    let fs;
+    try { fs = fsM.initializeFirestore(app, { localCache: fsM.persistentLocalCache({ tabManager: fsM.persistentMultipleTabManager() }) }); }
+    catch (e) { fs = fsM.getFirestore(app); }
+    AUTH = authM.getAuth(app);
+    try { AUTH.languageCode = 'fr'; } catch (e) {}
+    authM.onAuthStateChanged(AUTH, u => {
+      if (u) { S.me = u.uid; S.userEmail = u.email || ''; if (!DB) { DB = makeDb(fs, fsM); S.mode = 'sync'; subscribe(); registerMember(u); } }
+      else { DB = null; S.me = null; S.mode = 'auth'; S.days = new Map(); S.measures = new Map(); S.events = []; render(); }
+    });
+  } catch (e) { S.mode = 'offline-start'; render(); }
+}
+async function registerMember(u) {
+  try {
+    const ref = DB.doc('members/' + u.uid), s = await ref.get();
+    if (!s.exists) await ref.set({ name: (u.email || '').split('@')[0], email: u.email || '' });
+  } catch (e) {}
+}
+function subscribe() {
+  let confirmed = false;
+  const timer = setTimeout(() => { if (!confirmed) { S.netWarn = true; render(); } }, 10000);
+  DB.collection('days').where('day', '>=', dayKey(Date.now() - 400 * DAY)).onSnapshot(snap => {
+    S.days = new Map(); snap.docs.forEach(d => S.days.set(d.id, d.data()));
+    if (!snap.metadata.fromCache && !confirmed) { confirmed = true; clearTimeout(timer); S.netWarn = false; }
+    S.loaded = true; S.dbError = null; rebuild();
+  }, err => { clearTimeout(timer); S.netWarn = false; S.loaded = true; S.dbError = (err && err.code) || 'unavailable'; render(); });
+  DB.collection('measures').onSnapshot(snap => { S.measures = new Map(); snap.docs.forEach(d => S.measures.set(d.id, d.data())); rebuild(); }, () => {});
+  DB.collection('members').onSnapshot(snap => { S.profiles = {}; snap.docs.forEach(d => { S.profiles[d.id] = (d.data() || {}).name || ''; }); render(); }, () => {});
+  DB.doc('config/main').onSnapshot(s => {
+    S.config = s.exists ? s.data() : null;
+    if (!s.metadata.fromCache || s.exists) S.configLoaded = true;
+    render();
+  }, () => { S.configLoaded = true; render(); });
+}
+const whoName = id => { if (!id) return ''; if (id === S.me) return 'Toi'; const n = S.profiles[id]; return n ? n.split(' ')[0] : ''; };
+async function saveMyName(name) { if (!DB || !S.me) return; try { await DB.doc('members/' + S.me).merge({ name, email: S.userEmail || '' }); toast('Prénom enregistré'); } catch (e) { toast(errMsg(e)); } }
+
+/* ---------- Connexion ---------- */
+function viewAuth() {
+  return `<div class="top"><div><div class="muted small" style="font-weight:700">Bienvenue</div><h1>Petit Dodo</h1></div>${DECO_NIGHT}</div>
+  <form class="card" id="loginf" novalidate>
+    <p class="muted small" style="margin-bottom:12px">Connecte-toi avec le compte créé dans Firebase pour retrouver les données partagées de la famille.</p>
+    <label class="field"><span>E-mail</span><input type="email" name="email" autocomplete="username" inputmode="email" required></label>
+    <label class="field"><span>Mot de passe</span><input type="password" name="password" autocomplete="current-password" required></label>
+    <p class="err" id="loginerr" role="alert"></p>
+    <button class="btn primary block" type="submit">Se connecter</button>
+    <button class="link" type="button" data-act="reset-pw" style="margin-top:12px;display:block">Mot de passe oublié ?</button>
+  </form>`;
+}
+function viewSetup() {
+  return `<div class="top"><h1>Petit Dodo</h1>${DECO_DAY}</div><div class="card">
+    <h2 style="margin-bottom:8px">Configuration à terminer</h2>
+    <p class="small muted">Le fichier <b>firebase-config.js</b> ne contient pas encore la configuration de ton projet Firebase. Suis le guide <b>LISEZ-MOI</b> (étapes 1 à 4), puis recharge la page.</p>
+    <button class="btn block" data-act="use-local" style="margin-top:14px">Essayer sans synchronisation (données sur ce téléphone)</button></div>`;
+}
+document.addEventListener('submit', async e => {
+  if (e.target.id !== 'loginf') return;
+  e.preventDefault();
+  const fd = new FormData(e.target), err = $('#loginerr'), btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true; btn.textContent = 'Connexion…';
+  try { await FBM.auth.signInWithEmailAndPassword(AUTH, String(fd.get('email')).trim(), String(fd.get('password'))); }
+  catch (x) {
+    const c = x && x.code;
+    err.textContent = c === 'auth/network-request-failed' ? 'Pas de connexion internet.' : c === 'auth/too-many-requests' ? 'Trop de tentatives : réessaie dans quelques minutes.' : 'E-mail ou mot de passe incorrect.';
+    btn.disabled = false; btn.textContent = 'Se connecter';
+  }
+});
+
+/* ---------- Application installable : service worker et mises à jour ---------- */
+let SWREG = null;
+function registerSW() {
+  if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+  navigator.serviceWorker.register('sw.js').then(reg => {
+    SWREG = reg;
+    const watch = w => w && w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) { S.newVersion = true; render(); } });
+    if (reg.waiting && navigator.serviceWorker.controller) { S.newVersion = true; render(); }
+    reg.addEventListener('updatefound', () => watch(reg.installing));
+    setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(() => {}); });
+  }).catch(() => {});
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (!reloading) { reloading = true; location.reload(); } });
+}
+function applyUpdate() { if (SWREG && SWREG.waiting) SWREG.waiting.postMessage('skip-waiting'); else location.reload(); }
+
+/* ---------- Fichiers : partager / télécharger ---------- */
+async function saveFile(name, blob) {
+  try {
+    const file = new File([blob], name, { type: blob.type });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: name }); return true; }
+  } catch (e) { if (e && e.name === 'AbortError') return false; }
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+  return true;
+}
+
+/* ---------- Sleep logic ---------- */
+// [âge max en semaines, fenêtre d'éveil (min), siestes/jour, durée de sieste (min)]
+const TABLE = [[4, 50, 5, 60], [8, 65, 5, 50], [12, 80, 4, 50], [16, 95, 4, 55], [24, 120, 3, 60], [32, 150, 3, 60], [40, 175, 2, 75], [52, 200, 2, 75], [78, 250, 1, 120], [9999, 330, 1, 120]];
+const sleeps = () => S.events.filter(e => e.type === 'sleep');
+const ongoing = type => { const l = S.events.filter(e => e.type === type && e.end == null); return l[l.length - 1] || null; };
+function isNight(e) {
+  if (typeof e.night === 'boolean') return e.night;
+  const c = cfg(), m = minutesOf(e.start), bed = parseHM(c.bedtime), wake = parseHM(c.wakeTime);
+  if (e.end && e.end - e.start > 5 * HR) return true;
+  return m >= bed - 75 || m < wake - 45;
+}
+function isNightAwake(t) { const c = cfg(), m = minutesOf(t); return m >= parseHM(c.bedtime) + 60 || m < parseHM(c.wakeTime) - 45; }
+function ageWeeks() { const b = cfg().birth; if (!b) return null; const t = new Date(b + 'T12:00').getTime(); return isNaN(t) ? null : (Date.now() - t) / (7 * DAY); }
+function ageText() {
+  const w = ageWeeks(); if (w == null || w < 0) return '';
+  const d = Math.floor(w * 7);
+  if (d < 14) return d + (d > 1 ? ' jours' : ' jour');
+  if (w < 13) return Math.floor(w) + ' semaines';
+  const m = Math.floor(d / 30.44); return m + ' mois';
+}
+function personal() {
+  const since = Date.now() - 7 * DAY;
+  const sl = sleeps().filter(s => s.end != null).sort((a, b) => a.start - b.start);
+  const gaps = [], naps = [];
+  for (let i = 0; i < sl.length; i++) {
+    const s = sl[i]; if (s.end < since) continue;
+    const night = isNight(s);
+    if (!night) { const d = s.end - s.start; if (d >= 10 * MIN && d <= 4 * HR) naps.push(d); }
+    if (i > 0) {
+      const p = sl[i - 1], g = s.start - p.end;
+      if (!(night && isNight(p)) && g >= 15 * MIN && g <= 6 * HR) gaps.push(g);
+    }
+  }
+  const days = new Set(sl.filter(s => s.start >= since).map(s => dayKey(s.start))).size;
+  return { ww: median(gaps), wwN: gaps.length, nap: median(naps), napN: naps.length, days };
+}
+function params() {
+  const aw = ageWeeks();
+  const row = TABLE.find(r => (aw == null ? 16 : aw) < r[0]) || TABLE[TABLE.length - 1];
+  const p = personal();
+  const w1 = Math.min(p.wwN / 12, 0.75), w2 = Math.min(p.napN / 8, 0.75);
+  const ww = p.ww ? row[1] * MIN * (1 - w1) + p.ww * w1 : row[1] * MIN;
+  const nap = p.nap ? row[3] * MIN * (1 - w2) + p.nap * w2 : row[3] * MIN;
+  return { aw, ww, nap, naps: row[2], p, learning: p.days < 5 };
+}
+function predict(now) {
+  const c = cfg(), P = params();
+  const res = { items: [], next: null, bedtime: null, wake: null, lastWake: null, P };
+  const on = ongoing('sleep');
+  if (on && isNight(on)) {
+    let morning = atDay(c.wakeTime, on.start); if (morning <= on.start + 2 * HR) morning += DAY;
+    res.morning = morning;
+    // Durée habituelle d'une portion de nuit commencée vers la même heure (7 derniers jours)
+    const since = now - 7 * DAY, m0 = minutesOf(on.start);
+    const segs = sleeps().filter(x => x.end && x.end >= since && x.id !== on.id && isNight(x) && x.end - x.start >= 30 * MIN && x.end - x.start <= 9 * HR);
+    const near = segs.filter(x => { const d = Math.abs(minutesOf(x.start) - m0); return Math.min(d, 1440 - d) <= 90; });
+    const pick = near.length >= 3 ? near : segs;
+    const typical = median(pick.map(x => x.end - x.start));
+    res.wakeBasis = typical ? (pick === near ? 'near' : 'all') : null;
+    res.wake = typical ? Math.min(on.start + typical, morning) : morning;
+    if (res.wake < now) res.wake = null;
+    return res;
+  }
+  const t0 = startOfDay(now), bedT = atDay(c.bedtime, now);
+  const napsToday = sleeps().filter(s => s.start >= t0 && !isNight(s)).length;
+  let cursor;
+  if (on) { cursor = Math.max(on.start + P.nap, now + 5 * MIN); res.wake = cursor; }
+  else {
+    const ended = sleeps().filter(s => s.end != null);
+    const last = ended.length ? ended.reduce((a, b) => (a.end > b.end ? a : b)) : null;
+    cursor = last ? last.end : null;
+    if (!cursor || now - cursor > 10 * HR) cursor = Math.min(now, atDay(c.wakeTime, now));
+    res.lastWake = cursor;
+    if (isNightAwake(now)) { res.next = { kind: 'back', start: cursor + Math.min(P.ww, 90 * MIN) }; return res; }
+  }
+  let done = napsToday, first = napsToday === 0 && !on;
+  if (!on && cursor + P.ww * (first ? 0.85 : 1) < now - P.ww) cursor = now - P.ww * (first ? 0.85 : 1); // données manquantes : on repart de maintenant
+  for (let i = 0; i < 8; i++) {
+    const st = cursor + P.ww * (first ? 0.85 : 1);
+    if (st > bedT - P.ww * 0.6 || done >= P.naps + 1) break;
+    const it = { type: 'sleep', start: st, end: st + P.nap, predicted: true };
+    res.items.push(it); cursor = it.end; done++; first = false;
+  }
+  res.bedtime = Math.min(Math.max(cursor + P.ww * 1.15, bedT - 45 * MIN), bedT + 45 * MIN);
+  res.next = res.items.length ? { kind: 'nap', start: res.items[0].start } : { kind: 'bed', start: res.bedtime };
+  return res;
+}
+function lastMeal() {
+  const m = S.events.filter(e => e.type === 'feed' || e.type === 'bottle');
+  return m[m.length - 1] || null;
+}
+function lastSide() { const f = S.events.filter(e => e.type === 'feed' && e.side); return f.length ? f[f.length - 1].side : null; }
+const otherSide = s => (s === 'G' ? 'D' : 'G');
+const sideName = s => (s === 'G' ? 'gauche' : 'droit');
+
+/* Normes de croissance OMS (garçons et filles), tables officielles L, M, S : semaines 0-13 puis mois 0-24.
+   Source : who.int/tools/child-growth-standards — vérifiées contre les colonnes SD et percentiles publiées. */
+const WHO_TABLES = {
+  M: {
+    kg: { wk: [[0,0.3487,3.3464,0.14602],[1,0.2776,3.4879,0.14483],[2,0.2581,3.7529,0.14142],[3,0.2442,4.0603,0.13807],[4,0.2331,4.3671,0.13497],[5,0.2237,4.659,0.13215],[6,0.2155,4.9303,0.1296],[7,0.2081,5.1817,0.12729],[8,0.2014,5.4149,0.1252],[9,0.1952,5.6319,0.1233],[10,0.1894,5.8346,0.12157],[11,0.184,6.0242,0.12001],[12,0.1789,6.2019,0.1186],[13,0.174,6.369,0.11732]], mo: [[0,0.3487,3.3464,0.14602],[1,0.2297,4.4709,0.13395],[2,0.197,5.5675,0.12385],[3,0.1738,6.3762,0.11727],[4,0.1553,7.0023,0.11316],[5,0.1395,7.5105,0.1108],[6,0.1257,7.934,0.10958],[7,0.1134,8.297,0.10902],[8,0.1021,8.6151,0.10882],[9,0.0917,8.9014,0.10881],[10,0.082,9.1649,0.10891],[11,0.073,9.4122,0.10906],[12,0.0644,9.6479,0.10925],[13,0.0563,9.8749,0.10949],[14,0.0487,10.0953,0.10976],[15,0.0413,10.3108,0.11007],[16,0.0343,10.5228,0.11041],[17,0.0275,10.7319,0.11079],[18,0.0211,10.9385,0.11119],[19,0.0148,11.143,0.11164],[20,0.0087,11.3462,0.11211],[21,0.0029,11.5486,0.11261],[22,-0.0028,11.7504,0.11314],[23,-0.0083,11.9514,0.11369],[24,-0.0137,12.1515,0.11426]] },
+    height: { wk: [[0,1,49.8842,0.03795],[1,1,51.1152,0.03723],[2,1,52.3461,0.03652],[3,1,53.3905,0.03609],[4,1,54.3881,0.0357],[5,1,55.3374,0.03534],[6,1,56.2357,0.03501],[7,1,57.0851,0.0347],[8,1,57.8889,0.03442],[9,1,58.6536,0.03416],[10,1,59.3872,0.03392],[11,1,60.0894,0.03369],[12,1,60.7605,0.03348],[13,1,61.4013,0.03329]], mo: [[0,1,49.8842,0.03795],[1,1,54.7244,0.03557],[2,1,58.4249,0.03424],[3,1,61.4292,0.03328],[4,1,63.886,0.03257],[5,1,65.9026,0.03204],[6,1,67.6236,0.03165],[7,1,69.1645,0.03139],[8,1,70.5994,0.03124],[9,1,71.9687,0.03117],[10,1,73.2812,0.03118],[11,1,74.5388,0.03125],[12,1,75.7488,0.03137],[13,1,76.9186,0.03154],[14,1,78.0497,0.03174],[15,1,79.1458,0.03197],[16,1,80.2113,0.03222],[17,1,81.2487,0.0325],[18,1,82.2587,0.03279],[19,1,83.2418,0.0331],[20,1,84.1996,0.03342],[21,1,85.1348,0.03376],[22,1,86.0477,0.0341],[23,1,86.941,0.03445],[24,1,87.8161,0.03479]] },
+    head: { wk: [[0,1,34.4618,0.03686],[1,1,35.1634,0.03472],[2,1,35.8649,0.03258],[3,1,36.5216,0.03197],[4,1,37.0926,0.03148],[5,1,37.601,0.03107],[6,1,38.0609,0.03072],[7,1,38.4824,0.03041],[8,1,38.8724,0.03014],[9,1,39.2368,0.0299],[10,1,39.5797,0.02969],[11,1,39.9033,0.0295],[12,1,40.2096,0.02933],[13,1,40.5008,0.02918]], mo: [[0,1,34.4618,0.03686],[1,1,37.2759,0.03133],[2,1,39.1285,0.02997],[3,1,40.5135,0.02918],[4,1,41.6317,0.02868],[5,1,42.5576,0.02837],[6,1,43.3306,0.02817],[7,1,43.9803,0.02804],[8,1,44.53,0.02796],[9,1,44.9998,0.02792],[10,1,45.4051,0.0279],[11,1,45.7573,0.02789],[12,1,46.0661,0.02789],[13,1,46.3395,0.02789],[14,1,46.5844,0.02791],[15,1,46.806,0.02792],[16,1,47.0088,0.02795],[17,1,47.1962,0.02797],[18,1,47.3711,0.028],[19,1,47.5357,0.02803],[20,1,47.6919,0.02806],[21,1,47.8408,0.0281],[22,1,47.9833,0.02813],[23,1,48.1201,0.02817],[24,1,48.2515,0.02821]] },
+  },
+  F: {
+    kg: { wk: [[0,0.3809,3.2322,0.14171],[1,0.2671,3.3388,0.146],[2,0.2304,3.5693,0.14339],[3,0.2024,3.8352,0.1406],[4,0.1789,4.0987,0.13805],[5,0.1582,4.3476,0.13583],[6,0.1395,4.5793,0.13392],[7,0.1224,4.795,0.13228],[8,0.1065,4.9959,0.13087],[9,0.0918,5.1842,0.12966],[10,0.0779,5.3618,0.12861],[11,0.0648,5.5295,0.1277],[12,0.0525,5.6883,0.12691],[13,0.0407,5.8393,0.12622]], mo: [[0,0.3809,3.2322,0.14171],[1,0.1714,4.1873,0.13724],[2,0.0962,5.1282,0.13],[3,0.0402,5.8458,0.12619],[4,-0.005,6.4237,0.12402],[5,-0.043,6.8985,0.12274],[6,-0.0756,7.297,0.12204],[7,-0.1039,7.6422,0.12178],[8,-0.1288,7.9487,0.12181],[9,-0.1507,8.2254,0.12199],[10,-0.17,8.48,0.12223],[11,-0.1872,8.7192,0.12247],[12,-0.2024,8.9481,0.12268],[13,-0.2158,9.1699,0.12283],[14,-0.2278,9.387,0.12294],[15,-0.2384,9.6008,0.12299],[16,-0.2478,9.8124,0.12303],[17,-0.2562,10.0226,0.12306],[18,-0.2637,10.2315,0.12309],[19,-0.2703,10.4393,0.12315],[20,-0.2762,10.6464,0.12323],[21,-0.2815,10.8534,0.12335],[22,-0.2862,11.0608,0.1235],[23,-0.2903,11.2688,0.12369],[24,-0.2941,11.4775,0.1239]] },
+    height: { wk: [[0,1,49.1477,0.0379],[1,1,50.3298,0.03742],[2,1,51.512,0.03694],[3,1,52.4695,0.03669],[4,1,53.3809,0.03647],[5,1,54.2454,0.03627],[6,1,55.0642,0.03609],[7,1,55.8406,0.03593],[8,1,56.5767,0.03578],[9,1,57.2761,0.03564],[10,1,57.9436,0.03552],[11,1,58.5816,0.0354],[12,1,59.1922,0.0353],[13,1,59.7773,0.0352]], mo: [[0,1,49.1477,0.0379],[1,1,53.6872,0.0364],[2,1,57.0673,0.03568],[3,1,59.8029,0.0352],[4,1,62.0899,0.03486],[5,1,64.0301,0.03463],[6,1,65.7311,0.03448],[7,1,67.2873,0.03441],[8,1,68.7498,0.0344],[9,1,70.1435,0.03444],[10,1,71.4818,0.03452],[11,1,72.771,0.03464],[12,1,74.015,0.03479],[13,1,75.2176,0.03496],[14,1,76.3817,0.03514],[15,1,77.5099,0.03534],[16,1,78.6055,0.03555],[17,1,79.671,0.03576],[18,1,80.7079,0.03598],[19,1,81.7182,0.0362],[20,1,82.7036,0.03643],[21,1,83.6654,0.03666],[22,1,84.604,0.03688],[23,1,85.5202,0.03711],[24,1,86.4153,0.03734]] },
+    head: { wk: [[0,1,33.8787,0.03496],[1,1,34.5529,0.03374],[2,1,35.2272,0.03251],[3,1,35.843,0.03231],[4,1,36.3761,0.03215],[5,1,36.8472,0.03202],[6,1,37.2711,0.03191],[7,1,37.6584,0.03182],[8,1,38.0167,0.03173],[9,1,38.3516,0.03166],[10,1,38.6673,0.03158],[11,1,38.9661,0.03152],[12,1,39.2501,0.03146],[13,1,39.521,0.0314]], mo: [[0,1,33.8787,0.03496],[1,1,36.5463,0.0321],[2,1,38.2521,0.03168],[3,1,39.5328,0.0314],[4,1,40.5817,0.03119],[5,1,41.459,0.03102],[6,1,42.1995,0.03087],[7,1,42.829,0.03075],[8,1,43.3671,0.03063],[9,1,43.83,0.03053],[10,1,44.2319,0.03044],[11,1,44.5844,0.03035],[12,1,44.8965,0.03027],[13,1,45.1752,0.03019],[14,1,45.4265,0.03012],[15,1,45.6551,0.03006],[16,1,45.865,0.02999],[17,1,46.0598,0.02993],[18,1,46.2424,0.02987],[19,1,46.4152,0.02982],[20,1,46.5801,0.02977],[21,1,46.7384,0.02972],[22,1,46.8913,0.02967],[23,1,47.0391,0.02962],[24,1,47.1822,0.02957]] },
+  }
+};
+const HELV_W = [278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,761,556,556,222,556,333,1000,556,556,333,1000,667,333,1000,556,611,556,556,222,222,333,333,350,556,1000,333,1000,500,333,944,556,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,556,500];
+const HELVB_W = [278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,761,556,611,278,556,500,1000,556,556,333,1000,667,333,1000,611,611,611,611,278,278,500,500,350,556,1000,333,1000,556,333,944,611,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,611,556];
+function lerpRow(rows, x) {
+  if (x <= rows[0][0]) return rows[0].slice(1);
+  for (let i = 1; i < rows.length; i++) {
+    if (x <= rows[i][0]) { const a = rows[i - 1], b = rows[i], f = (x - a[0]) / (b[0] - a[0]); return [1, 2, 3].map(k => a[k] + (b[k] - a[k]) * f); }
+  }
+  return null; // au-delà des tables (24 mois)
+}
+function whoLMS(metric, days) {
+  const sx = cfg().sex; if (sx !== 'M' && sx !== 'F') return null;
+  const t = WHO_TABLES[sx][metric]; if (!t || days < 0) return null;
+  return days <= 91 ? lerpRow(t.wk, days / 7) : lerpRow(t.mo, days / 30.4375);
+}
+const whoValue = (lms, z) => lms[0] === 0 ? lms[1] * Math.exp(lms[2] * z) : lms[1] * Math.pow(1 + lms[0] * lms[2] * z, 1 / lms[0]);
+const whoZ = (lms, y) => lms[0] === 0 ? Math.log(y / lms[1]) / lms[2] : (Math.pow(y / lms[1], lms[0]) - 1) / (lms[0] * lms[2]);
+function normCdf(z) { const t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2); const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; }
+const isGirl = () => cfg().sex === 'F';
+const gx = (m, f) => (isGirl() ? f : m);
+const whoLabel = () => (cfg().sex === 'F' ? 'OMS filles' : cfg().sex === 'M' ? 'OMS garçons' : 'OMS');
+const CENTILES = [[3, -1.880794], [15, -1.036433], [50, 0], [85, 1.036433], [97, 1.880794]];
+function birthTime() { const b = cfg().birth; if (!b) return null; const t = new Date(b + 'T12:00').getTime(); return isNaN(t) ? null : t; }
+function whoAgeDays(t) { const b = birthTime(); if (b == null) return null; return (t - b) / DAY - (Number(cfg().premWeeks) || 0) * 7; }
+function whoCentile(metric, e) {
+  const a = whoAgeDays(e.start); if (a == null || a < 0 || !e[metric]) return null;
+  const lms = whoLMS(metric, a); if (!lms) return null;
+  const z = whoZ(lms, e[metric]); return { z, p: normCdf(z) * 100 };
+}
+function centileText(c) {
+  if (!c) return '';
+  if (c.p < 3) return 'sous le 3e percentile';
+  if (c.p > 97) return 'au-dessus du 97e percentile';
+  const p = Math.round(c.p); return (p === 1 ? '1er' : p + 'e') + ' percentile';
+}
+
+/* ---------- Générateur PDF minimal (Helvetica, A4) ---------- */
+const WIN_EXTRA = { '€': 128, '‚': 130, 'ƒ': 131, '„': 132, '…': 133, '†': 134, '‡': 135, 'ˆ': 136, '‰': 137, 'Š': 138, '‹': 139, 'Œ': 140, 'Ž': 142, '‘': 145, '’': 146, '“': 147, '”': 148, '•': 149, '–': 150, '—': 151, '˜': 152, '™': 153, 'š': 154, '›': 155, 'œ': 156, 'ž': 158, 'Ÿ': 159, ' ': 160, ' ': 32, ' ': 160 };
+function winBytes(s) { const out = []; for (const ch of String(s)) { const c = ch.codePointAt(0); if ((c >= 32 && c < 127) || (c >= 160 && c <= 255)) out.push(c); else if (WIN_EXTRA[ch] !== undefined) out.push(WIN_EXTRA[ch]); else if (c >= 0x1F000 || (c >= 0x2600 && c < 0x2800) || c === 0xFE0F) { } else out.push(63); } return out; }
+function makePdf() {
+  const W = 595.28, H = 841.89, pages = []; let cs = null;
+  const hex = c => { const n = parseInt(c.slice(1), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255].map(v => v.toFixed(3)).join(' '); };
+  const f2 = n => n.toFixed(2);
+  const P = {
+    W, H, pages,
+    page() { cs = []; pages.push(cs); },
+    width(s, size, bold) { const w = bold ? HELVB_W : HELV_W; return winBytes(s).reduce((a, b) => a + (w[b - 32] || 556), 0) * size / 1000; },
+    text(x, y, s, o = {}) {
+      const size = o.size || 10; let tx = x;
+      if (o.align === 'right') tx = x - P.width(s, size, o.bold); else if (o.align === 'center') tx = x - P.width(s, size, o.bold) / 2;
+      const str = winBytes(s).map(b => { const ch = String.fromCharCode(b); return ch === '(' || ch === ')' || ch === '\\' ? '\\' + ch : ch; }).join('');
+      cs.push(`BT /${o.bold ? 'F2' : 'F1'} ${size} Tf ${hex(o.color || '#2b2740')} rg ${f2(tx)} ${f2(H - y)} Td (${str}) Tj ET`);
+    },
+    wrap(s, maxW, size, bold) {
+      const words = String(s).split(/\s+/), lines = []; let cur = '';
+      for (const w of words) { const t = cur ? cur + ' ' + w : w; if (P.width(t, size, bold) > maxW && cur) { lines.push(cur); cur = w; } else cur = t; }
+      if (cur) lines.push(cur); return lines;
+    },
+    line(x1, y1, x2, y2, o = {}) { cs.push(`${hex(o.color || '#d9d4e8')} RG ${o.width || 0.6} w ${o.dash ? '[' + o.dash.join(' ') + '] 0 d' : '[] 0 d'} ${f2(x1)} ${f2(H - y1)} m ${f2(x2)} ${f2(H - y2)} l S`); },
+    rect(x, y, w, h, o = {}) {
+      let s = '';
+      if (o.fill) s += `${hex(o.fill)} rg `;
+      if (o.stroke) s += `${hex(o.stroke)} RG ${o.width || 0.6} w [] 0 d `;
+      s += `${f2(x)} ${f2(H - y - h)} ${f2(w)} ${f2(h)} re ${o.fill && o.stroke ? 'B' : o.fill ? 'f' : 'S'}`; cs.push(s);
+    },
+    poly(pts, o = {}) {
+      if (pts.length < 2) return;
+      cs.push(`${hex(o.color || '#6f60d4')} RG ${o.width || 1.2} w ${o.dash ? '[' + o.dash.join(' ') + '] 0 d' : '[] 0 d'} 1 J 1 j ` + pts.map((p, i) => `${f2(p[0])} ${f2(H - p[1])} ${i ? 'l' : 'm'}`).join(' ') + ' S');
+    },
+    dot(x, y, r, o = {}) {
+      const k = 0.5523 * r, cx = x, cy = H - y;
+      cs.push(`${hex(o.fill || '#6f60d4')} rg ${hex(o.stroke || o.fill || '#6f60d4')} RG 1 w [] 0 d ${f2(cx + r)} ${f2(cy)} m ${f2(cx + r)} ${f2(cy + k)} ${f2(cx + k)} ${f2(cy + r)} ${f2(cx)} ${f2(cy + r)} c ${f2(cx - k)} ${f2(cy + r)} ${f2(cx - r)} ${f2(cy + k)} ${f2(cx - r)} ${f2(cy)} c ${f2(cx - r)} ${f2(cy - k)} ${f2(cx - k)} ${f2(cy - r)} ${f2(cx)} ${f2(cy - r)} c ${f2(cx + k)} ${f2(cy - r)} ${f2(cx + r)} ${f2(cy - k)} ${f2(cx + r)} ${f2(cy)} c B`);
+    },
+    onPage(i) { cs = pages[i]; },
+    build(title) {
+      const objs = ['', '', '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>', '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>'];
+      const kids = [];
+      for (const p of pages) {
+        const data = p.join('\n');
+        objs.push(`<< /Length ${data.length} >>\nstream\n${data}\nendstream`);
+        const cid = objs.length;
+        objs.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${cid} 0 R >>`);
+        kids.push(objs.length + ' 0 R');
+      }
+      objs[0] = '<< /Type /Catalog /Pages 2 0 R >>';
+      objs[1] = `<< /Type /Pages /Kids [${kids.join(' ')}] /Count ${kids.length} >>`;
+      const tit = winBytes(title).map(b => { const ch = String.fromCharCode(b); return ch === '(' || ch === ')' || ch === '\\' ? '\\' + ch : ch; }).join('');
+      objs.push(`<< /Title (${tit}) /Producer (Petit Dodo - DevLabs - A. Giraud) >>`);
+      const infoId = objs.length;
+      let out = '%PDF-1.4\n%\xe2\xe3\xcf\xd3\n'; const offs = [];
+      objs.forEach((o, i) => { offs.push(out.length); out += `${i + 1} 0 obj\n${o}\nendobj\n`; });
+      const xref = out.length;
+      out += `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n` + offs.map(o => String(o).padStart(10, '0') + ' 00000 n \n').join('');
+      out += `trailer\n<< /Size ${objs.length + 1} /Root 1 0 R /Info ${infoId} 0 R >>\nstartxref\n${xref}\n%%EOF\n`;
+      const bytes = new Uint8Array(out.length); for (let i = 0; i < out.length; i++) bytes[i] = out.charCodeAt(i) & 255;
+      return bytes;
+    }
+  };
+  return P;
+}
+
+/* ---------- Rapport pour le pédiatre ---------- */
+function reportData(now) {
+  const t0 = startOfDay(now), days = [];
+  for (let i = 14; i >= 1; i--) {
+    const ds = t0 - i * DAY, de = ds + DAY, st = dayStats(ds, now);
+    let longest = 0, stools = 0;
+    for (const e of S.events) {
+      if (e.type === 'sleep' && e.end && overlap(e.start, e.end, ds, de) > 0) longest = Math.max(longest, e.end - e.start);
+      if (e.type === 'diaper' && e.start >= ds && e.start < de && (e.kind === 'selle' || e.kind === 'mixte')) stools++;
+    }
+    days.push(Object.assign(st, { longest, stools }));
+  }
+  return days;
+}
+function generateReport(now) {
+  const c = cfg(), P = makePdf(), M = 40, W = P.W, ACC = '#6f60d4', MUT = '#7a7391', TXT = '#2b2740', LIGHT = '#efebff';
+  const fmtDate = (t, o) => new Date(t).toLocaleDateString('fr-FR', o || { day: 'numeric', month: 'long', year: 'numeric' });
+  const days = reportData(now), wk = days.slice(7), filled = d => d.any;
+  const avg = (arr, f) => { const a = arr.filter(filled); return a.length ? a.reduce((s, d) => s + f(d), 0) / a.length : null; };
+  const n1 = v => v == null ? '—' : (Math.round(v * 10) / 10).toLocaleString('fr-FR');
+  const hh = v => v == null ? '—' : dur(v);
+  let y = 0;
+  const ensure = h => { if (y + h > P.H - 54) { P.page(); y = 48; } };
+  const section = t => { ensure(60); y += 26; P.text(M, y, t, { size: 13, bold: true, color: ACC }); y += 7; P.line(M, y, W - M, y, { color: '#d9d4e8', width: 0.8 }); y += 6; };
+  const para = (s, o = {}) => { for (const l of P.wrap(s, W - 2 * M - (o.indent || 0), o.size || 9.5, o.bold)) { ensure(14); y += o.lh || 13; P.text(M + (o.indent || 0), y, l, { size: o.size || 9.5, bold: o.bold, color: o.color || TXT }); } };
+  const table = (cols, rows) => {
+    const rowH = 15, x0 = M; let x;
+    const head = () => { ensure(rowH * 2); y += 4; P.rect(x0, y, W - 2 * M, rowH, { fill: LIGHT }); x = x0; cols.forEach(col => { const tx = col.align === 'right' ? x + col.w - 4 : x + 4; P.text(tx, y + 10.5, col.t, { size: 8, bold: true, color: MUT, align: col.align }); x += col.w; }); y += rowH; };
+    head();
+    rows.forEach((r, i) => {
+      if (y + rowH > P.H - 54) { P.page(); y = 48; head(); }
+      if (i % 2) P.rect(x0, y, W - 2 * M, rowH, { fill: '#faf8fd' });
+      x = x0; cols.forEach((col, k) => { const tx = col.align === 'right' ? x + col.w - 4 : x + 4; P.text(tx, y + 10.5, String(r[k] ?? '—'), { size: 8.5, color: TXT, align: col.align, bold: col.bold }); x += col.w; });
+      y += rowH;
+    });
+  };
+
+  // En-tête
+  P.page();
+  P.rect(0, 0, W, 86, { fill: LIGHT });
+  P.text(M, 36, 'Rapport de suivi — ' + (c.babyName || 'Bébé'), { size: 19, bold: true, color: TXT });
+  const birth = birthTime();
+  const ageLine = [birth ? gx('Né', 'Née') + ' le ' + fmtDate(birth) : null, ageText() ? 'âge : ' + ageText() : null, Number(c.premWeeks) ? 'âge corrigé : ' + Math.max(0, Math.floor(whoAgeDays(now) / 7)) + ' semaines (' + gx('né', 'née') + ' à ' + c.gaWeeks + ' SA)' : null].filter(Boolean).join(' · ');
+  P.text(M, 56, ageLine, { size: 9.5, color: MUT });
+  P.text(M, 72, 'Période détaillée : ' + fmtDate(days[0].ds, { day: 'numeric', month: 'long' }) + ' – ' + fmtDate(days[13].ds) + ' (14 jours)', { size: 9.5, color: MUT });
+  P.text(W - M, 36, 'Établi le ' + fmtDate(now, { day: '2-digit', month: '2-digit', year: 'numeric' }), { size: 9, color: MUT, align: 'right' });
+  y = 96;
+
+  // Résumé
+  const ms = S.events.filter(e => e.type === 'growth'), Wt = ms.filter(m => m.kg);
+  const lastW = Wt[Wt.length - 1];
+  let gain = null;
+  if (lastW) { const refs = Wt.filter(w => w.start <= lastW.start - 7 * DAY); if (refs.length) { const ref = refs[refs.length - 1]; gain = (lastW.kg - ref.kg) * 1000 / ((lastW.start - ref.start) / DAY); } }
+  const boxes = [
+    ['Dernier poids', lastW ? numFr(lastW.kg, 3) + ' kg' : '—', lastW ? fmtDate(lastW.start, { day: 'numeric', month: 'short' }) + (whoCentile('kg', lastW) ? ' · ' + centileText(whoCentile('kg', lastW)) : '') : ''],
+    ['Prise de poids récente', gain == null ? '—' : (gain >= 0 ? '+' : '') + Math.round(gain) + ' g/jour', 'pesées espacées d\u2019au moins 7 j'],
+    ['Sommeil / 24 h', hh(avg(wk, d => d.day + d.night)), 'moyenne sur 7 jours'],
+    ['Plus long sommeil', hh(avg(wk, d => d.longest)), 'moyenne par jour, 7 jours'],
+    ['Repas / jour', n1(avg(wk, d => d.feeds + d.bottles)), (avg(wk, d => d.ml) ? Math.round(avg(wk, d => d.ml)) + ' ml de lait / jour' : '')],
+    ['Couches / jour', n1(avg(wk, d => d.dia)), 'dont selles : ' + n1(avg(wk, d => d.stools))]
+  ];
+  const bw = (W - 2 * M - 2 * 10) / 3, bh = 50;
+  boxes.forEach((b, i) => {
+    const bx = M + (i % 3) * (bw + 10), by = y + 8 + Math.floor(i / 3) * (bh + 8);
+    P.rect(bx, by, bw, bh, { stroke: '#e3def0', width: 0.8 });
+    P.text(bx + 9, by + 15, b[0], { size: 8, color: MUT, bold: true });
+    P.text(bx + 9, by + 32, b[1], { size: 13.5, bold: true, color: TXT });
+    if (b[2]) P.text(bx + 9, by + 44, P.wrap(b[2], bw - 18, 7.5)[0], { size: 7.5, color: MUT });
+  });
+  y += 8 + 2 * (bh + 8);
+
+  // Croissance
+  if (ms.length) {
+    section('Croissance');
+    if (Wt.length && birth && (c.sex === 'M' || c.sex === 'F')) {
+      ensure(215);
+      const cx = M + 30, cw = W - 2 * M - 70, ch = 170, cy = y + 12;
+      const ages = Wt.map(e => whoAgeDays(e.start));
+      const x1 = Math.max(42, Math.ceil((Math.max(...ages) + 10) / 7) * 7);
+      let lo = Math.min(...Wt.map(e => e.kg)), hi = Math.max(...Wt.map(e => e.kg));
+      const curves = CENTILES.map(([p, z]) => { const pts = []; for (let a = 0; a <= x1; a += Math.max(1, x1 / 80)) { const l = whoLMS('kg', a); if (l) pts.push([a, whoValue(l, z)]); } return [p, pts]; });
+      curves.forEach(([, pts]) => pts.forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); }));
+      lo = Math.floor(lo * 2) / 2; hi = Math.ceil(hi * 2) / 2;
+      const X = a => cx + cw * a / x1, Y = v => cy + ch * (1 - (v - lo) / (hi - lo));
+      for (let v = lo; v <= hi + 1e-9; v += 0.5) { P.line(cx, Y(v), cx + cw, Y(v), { color: '#ece8f5', width: 0.5 }); if (Math.abs(v - Math.round(v)) < 1e-9) P.text(cx - 5, Y(v) + 3, numFr(v) + ' kg', { size: 7, color: MUT, align: 'right' }); }
+      const step = x1 > 120 ? 28 : 7;
+      for (let a = 0; a <= x1; a += step) { P.line(X(a), cy, X(a), cy + ch, { color: '#f2eff8', width: 0.5 }); P.text(X(a), cy + ch + 11, a === 0 ? 'naiss.' : (step === 7 ? a / 7 + ' sem' : Math.round(a / 30.4) + ' mois'), { size: 7, color: MUT, align: 'center' }); }
+      curves.forEach(([p, pts]) => { P.poly(pts.map(q => [X(q[0]), Y(q[1])]), { color: p === 50 ? '#9b95b0' : '#c9c4d8', width: p === 50 ? 1 : 0.7, dash: p === 50 ? null : [2, 2] }); const last = pts[pts.length - 1]; P.text(cx + cw + 4, Y(last[1]) + 2.5, 'P' + p, { size: 7, color: MUT }); });
+      const sp = Wt.map(e => [X(whoAgeDays(e.start)), Y(e.kg)]);
+      P.poly(sp, { color: ACC, width: 1.6 });
+      sp.forEach(p => P.dot(p[0], p[1], 2.2, { fill: ACC }));
+      y = cy + ch + 18;
+      para('Courbe : poids de ' + (c.babyName || 'bébé') + ' (trait violet) et courbes ' + whoLabel() + ' P3, P15, P50, P85, P97' + (Number(c.premWeeks) ? ', en âge corrigé.' : '.'), { size: 8, color: MUT, lh: 11 });
+    }
+    const pc = e => { const parts = ['kg', 'height', 'head'].map(k => whoCentile(k, e)).map((x, i) => x ? ['P', 'T', 'PC'][i] + ' ' + (x.p < 3 ? '<3' : x.p > 97 ? '>97' : Math.round(x.p)) : null).filter(Boolean); return parts.join(' · ') || '—'; };
+    y += 4;
+    table([{ t: 'Date', w: 95 }, { t: 'Âge', w: 70 }, { t: 'Poids', w: 70, align: 'right' }, { t: 'Taille', w: 65, align: 'right' }, { t: 'Pér. crânien', w: 75, align: 'right' }, { t: 'Percentiles OMS', w: W - 2 * M - 375 }],
+      [...ms].reverse().slice(0, 14).map(e => [fmtDate(e.start, { day: 'numeric', month: 'short', year: 'numeric' }), birth ? Math.floor((e.start - birth) / DAY / 7) + ' sem ' + Math.floor((e.start - birth) / DAY % 7) + ' j' : '—', e.kg ? numFr(e.kg, 3) + ' kg' : '—', e.height ? numFr(e.height, 1) + ' cm' : '—', e.head ? numFr(e.head, 1) + ' cm' : '—', pc(e)]));
+  }
+
+  // Sommeil & alimentation
+  section('Sommeil, repas et couches — 14 derniers jours');
+  table([{ t: 'Jour', w: 78 }, { t: 'Sommeil', w: 58, align: 'right' }, { t: 'dont nuit', w: 56, align: 'right' }, { t: 'Siestes', w: 64, align: 'right' }, { t: 'Plus long', w: 56, align: 'right' }, { t: 'Repas', w: 44, align: 'right' }, { t: 'Lait', w: 52, align: 'right' }, { t: 'Couches', w: W - 2 * M - 408, align: 'right' }],
+    [...days].reverse().map(d => [cap(new Date(d.ds).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })), d.any ? dur(d.day + d.night) : '—', d.night ? dur(d.night) : '—', d.naps ? d.naps + ' · ' + dur(d.day) : '—', d.longest ? dur(d.longest) : '—', (d.feeds + d.bottles) || '—', d.ml ? d.ml + ' ml' : '—', d.dia ? d.dia + (d.stools ? ' (' + d.stools + ' selles)' : '') : '—']));
+  para('« Plus long » : plus longue période de sommeil d’un seul tenant touchant la journée. Nuit et siestes selon le découpage noté par les parents.', { size: 8, color: MUT, lh: 12 });
+
+  // Santé
+  const since = now - 30 * DAY, recent = S.events.filter(e => e.start >= since && e.start <= now);
+  const meds = {}; recent.filter(e => e.type === 'med').forEach(e => { (meds[e.text] = meds[e.text] || []).push(e.start); });
+  const temps = recent.filter(e => e.type === 'temp');
+  const visits = S.events.filter(e => e.type === 'visit' && e.start >= now - 60 * DAY);
+  const notes = S.events.filter(e => e.type === 'note' && e.start >= now - 14 * DAY && e.start <= now);
+  const baths = S.events.filter(e => e.type === 'bath' && e.start >= now - 14 * DAY && e.start <= now).length;
+  section('Santé et remarques');
+  const sub = t => { ensure(30); y += 18; P.text(M, y, t, { size: 10, bold: true, color: TXT }); };
+  sub('Traitements (30 derniers jours)');
+  const mk = Object.keys(meds);
+  if (!mk.length) para('Aucun traitement noté.', { color: MUT });
+  mk.forEach(k => { const t = meds[k].sort((a, b) => a - b); para('• ' + k + ' — ' + t.length + (t.length > 1 ? ' prises' : ' prise') + ', du ' + fmtDate(t[0], { day: 'numeric', month: 'short' }) + ' au ' + fmtDate(t[t.length - 1], { day: 'numeric', month: 'short' }), { indent: 6 }); });
+  sub('Températures (30 derniers jours)');
+  if (!temps.length) para('Aucune température notée.', { color: MUT });
+  else para(temps.map(e => fmtDate(e.start, { day: 'numeric', month: 'short' }) + ' ' + hm(e.start) + ' : ' + numFr(e.c, 1) + ' °C').join('   ·   '), { indent: 6 });
+  sub('Rendez-vous médicaux');
+  if (!visits.length) para('Aucun rendez-vous noté sur les 60 derniers jours.', { color: MUT });
+  visits.forEach(e => { para('• ' + fmtDate(e.start, { weekday: 'long', day: 'numeric', month: 'long' }) + ' à ' + hm(e.start) + ' — ' + (e.text || 'Rendez-vous') + (e.start > now ? ' (à venir)' : ''), { indent: 6 }); if (e.notes) para(e.notes, { indent: 16, color: MUT, size: 9 }); });
+  sub('Autres');
+  para('Bains sur 14 jours : ' + baths + '.', { indent: 6 });
+  notes.forEach(e => para('• ' + fmtDate(e.start, { day: 'numeric', month: 'short' }) + ' ' + hm(e.start) + ' — ' + e.text, { indent: 6 }));
+
+  // Pied de page
+  const total = P.pages.length;
+  P.pages.forEach((_, i) => { P.onPage(i); P.line(M, P.H - 34, W - M, P.H - 34, { color: '#e3def0' }); P.text(M, P.H - 22, 'Petit Dodo · DevLabs - A. Giraud — données saisies par les parents, à interpréter par un professionnel de santé.', { size: 7, color: MUT }); P.text(W - M, P.H - 22, 'Page ' + (i + 1) + ' / ' + total, { size: 7, color: MUT, align: 'right' }); });
+  return P.build('Rapport de suivi - ' + (c.babyName || 'Bébé'));
+}
+async function downloadReport() {
+  let bytes;
+  try { bytes = generateReport(Date.now()); } catch (e) { toast('Impossible de créer le rapport.'); return; }
+  const name = 'Rapport-' + (cfg().babyName || 'bebe').replace(/[^\w-]+/g, '') + '-' + dayKey(Date.now()) + '.pdf';
+  try { if (await saveFile(name, new Blob([bytes], { type: 'application/pdf' }))) toast('Rapport prêt'); }
+  catch (e) { toast('Téléchargement impossible pour le moment.'); }
+}
+
+/* ---------- Import d'un export Napper (CSV) ---------- */
+function parseCsv(text) {
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+    else if (ch === '"') q = true;
+    else if (ch === ',') { row.push(cell); cell = ''; }
+    else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+    else cell += ch;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(c => c.trim()));
+}
+const b36 = n => Math.floor(n).toString(36);
+function napperTime(s) { const m = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?/.exec(String(s || '').trim()); return m ? new Date(+m[1], m[2] - 1, +m[3], +m[4], +m[5], +(m[6] || 0)).getTime() : null; }
+function napperToEvents(text, now) {
+  const rows = parseCsv(text.replace(/^﻿/, ''));
+  if (!rows.length) throw new Error('vide');
+  const head = rows[0].map(h => h.trim()), col = n => head.indexOf(n);
+  const iT = col('Date et heure'), iE = col('Événement'), iTy = col('Type'), iV = col('Valeur'), iN = col('Valeur.Nombre'), iD = col('Début'), iF = col('Fin'), iC = col('Commentaires');
+  if (iT < 0 || iE < 0) throw new Error('format');
+  const evs = [], measures = [], skipped = [];
+  const lastSleepStart = Math.max(0, ...rows.slice(1).filter(r => r[iE] === 'Sommeil').map(r => napperTime(r[iD]) || 0));
+  for (const r of rows.slice(1)) {
+    const t = napperTime(r[iT]), ev = r[iE], ty = (r[iTy] || '').trim(), val = (r[iV] || '').trim(), com = iC >= 0 ? (r[iC] || '').trim() : '';
+    if (!t || !ev) continue;
+    const num = parseFloat(String(r[iN] || val).replace(',', '.'));
+    let e = null;
+    if (ev === 'Sommeil') {
+      const s = napperTime(r[iD]), f = napperTime(r[iF]);
+      if (!s) continue;
+      if (!f || f - s < 60000) {
+        if (s === lastSleepStart && now - s < 16 * HR) e = { type: 'sleep', start: s, end: null, night: ty === 'Nuit' };
+        else { skipped.push('sommeil vide'); continue; }
+      } else e = { type: 'sleep', start: s, end: f, night: ty === 'Nuit' };
+    } else if (ev === 'Biberon') {
+      if (!(num > 0)) { skipped.push('biberon 0 ml'); continue; }
+      e = { type: 'bottle', start: t, ml: Math.round(num) };
+      if (/maternel/i.test(ty)) e.milk = 'maternel';
+    } else if (ev === 'Couche') {
+      e = { type: 'diaper', start: t, kind: { 'Mouillée': 'pipi', 'Sale': 'selle', 'Les deux': 'mixte' }[ty] || 'pipi' };
+    } else if (ev === 'Poids' || ev === 'Taille' || ev === 'Circonférence du crâne') {
+      if (!(num > 0)) continue;
+      const k = ev === 'Poids' ? 'kg' : ev === 'Taille' ? 'height' : 'head';
+      let m = measures.find(x => Math.abs(x.start - t) <= 15 * MIN && x[k] === undefined);
+      if (!m) { m = { start: t }; measures.push(m); }
+      m[k] = num; continue;
+    } else if (ev === 'Température') {
+      if (!(num >= 34 && num <= 43)) continue;
+      e = { type: 'temp', start: t, c: Math.round(num * 10) / 10 };
+    } else if (ev === 'Bain') {
+      const mm = /(\d+)\s*min/.exec(val), ss = /(\d+)\s*s\b/.exec(val);
+      e = { type: 'bath', start: napperTime(r[iD]) || t, min: mm ? +mm[1] + (ss && +ss[1] >= 30 ? 1 : 0) : null };
+    } else if (ev === 'Traitements') {
+      e = { type: 'med', start: t, text: ty || val || 'Traitement' };
+    } else if (ev === 'Visite chez le médecin') {
+      e = { type: 'visit', start: napperTime(r[iD]) || t, text: ty || 'Médecin' };
+      if (com) e.notes = com;
+    } else if (ev === 'Promenade') {
+      e = { type: 'note', start: napperTime(r[iD]) || t, text: 'Promenade' + (val ? ' (' + val + ')' : '') };
+    } else if (ev === 'Photo') {
+      e = { type: 'note', start: t, text: 'Photo : ' + (ty || val || '') };
+    } else {
+      e = { type: 'note', start: t, text: [ev, ty, val].filter(Boolean).join(' · ') };
+    }
+    if (com && e.type !== 'visit') { if (e.type === 'note' || e.type === 'med') e.text += ' — ' + com; }
+    e.id = 'i' + b36(e.start / 1000) + e.type[0];
+    evs.push(e);
+  }
+  measures.forEach(m => { m.id = 'm' + b36(m.start / 1000); m.type = 'growth'; });
+  // Un « sommeil » de plus de 8 h qui chevauche au moins deux autres sommeils est un doublon de saisie dans Napper
+  const sl = evs.filter(e => e.type === 'sleep' && e.end);
+  const dupes = new Set(sl.filter(e => e.end - e.start > 8 * HR && sl.filter(o => o !== e && o.start < e.end && o.end > e.start).length >= 2));
+  if (dupes.size) dupes.forEach(() => skipped.push('sommeil en double'));
+  return { evs: evs.filter(e => !dupes.has(e)), measures, skipped };
+}
+function napperDiff(parsed) {
+  const byId = new Map(S.events.map(e => [e.id, e]));
+  const isDup = e => {
+    const ex = byId.get(e.id);
+    if (ex) return e.type !== 'sleep' || ex.end != null || e.end == null ? 'same' : 'update';
+    const w = e.type === 'growth' ? 15 * MIN : 10 * MIN;
+    const near = S.events.find(x => x.type === e.type && Math.abs(x.start - e.start) <= w);
+    if (!near) return null;
+    if (e.type === 'sleep' && near.end == null && e.end != null) return { update: near };
+    return 'same';
+  };
+  const add = [], upd = [];
+  for (const e of [...parsed.evs, ...parsed.measures]) {
+    const d = isDup(e);
+    if (!d) add.push(e);
+    else if (d === 'update') upd.push(Object.assign({}, byId.get(e.id), { end: e.end }));
+    else if (d.update) upd.push(Object.assign({}, d.update, { end: e.end, night: e.night }));
+  }
+  return { add, upd };
+}
+async function writeImport(add, upd) {
+  const byDay = {};
+  for (const e of add) {
+    if (e.type === 'growth') { await putMeasure(e); continue; }
+    const clean = {}; for (const k of FIELDS) if (e[k] !== undefined) clean[k] = e[k];
+    clean.at = Date.now();
+    (byDay[dayKey(e.start)] = byDay[dayKey(e.start)] || {})[e.id] = clean;
+  }
+  for (const e of upd) await putEvent(e);
+  const days = Object.keys(byDay).sort();
+  if (!DB) {
+    days.forEach(day => { const d = S.days.get(day) || { day, events: {} }; S.days.set(day, { day, events: Object.assign({}, d.events, byDay[day]) }); });
+    localSave(); rebuild(); return;
+  }
+  for (const day of days) {
+    await queue(async () => {
+      await DB.doc('days/' + day).merge({ day, events: byDay[day] });
+    });
+  }
+}
+function importNapperSheet() {
+  openSheet(`<h2>Importer un export Napper</h2>
+    <p class="muted small" style="margin-bottom:12px">Dans Napper : Réglages → Exporter les données → fichier CSV. Choisis ce fichier ici : seuls les événements absents de Petit Dodo sont ajoutés, les doublons sont ignorés.</p>
+    <label class="btn primary block" style="cursor:pointer">Choisir le fichier CSV<input type="file" accept=".csv,text/csv" id="napfile" style="display:none"></label>
+    <div id="napres" style="margin-top:14px"></div>`, el => {
+    el.querySelector('#napfile').addEventListener('change', async ev => {
+      const f = ev.target.files && ev.target.files[0], res = el.querySelector('#napres');
+      if (!f) return;
+      let parsed;
+      try { parsed = napperToEvents(await f.text(), Date.now()); }
+      catch (e) { res.innerHTML = `<p class="err">Ce fichier ne ressemble pas à un export Napper (CSV).</p>`; return; }
+      const { add, upd } = napperDiff(parsed);
+      const count = t => add.filter(e => e.type === t).length;
+      const parts = [['sleep', 'dodos'], ['bottle', 'biberons'], ['feed', 'tétées'], ['diaper', 'couches'], ['growth', 'mesures'], ['bath', 'bains'], ['med', 'traitements'], ['temp', 'températures'], ['visit', 'rendez-vous'], ['note', 'notes']].map(([t, l]) => count(t) ? count(t) + ' ' + l : null).filter(Boolean);
+      if (!add.length && !upd.length) { res.innerHTML = `<p class="muted">Tout est déjà à jour : aucun nouvel événement dans ce fichier.</p>`; return; }
+      res.innerHTML = `<div class="card" style="margin:0 0 12px;box-shadow:none"><b>${add.length} nouveaux événements</b><p class="small muted" style="margin-top:4px">${parts.join(', ') || '—'}${upd.length ? `<br>${upd.length} dodo${upd.length > 1 ? 's' : ''} en cours mis à jour (heure de réveil)` : ''}${parsed.skipped.length ? `<br>${parsed.skipped.length} ligne${parsed.skipped.length > 1 ? 's' : ''} ignorée${parsed.skipped.length > 1 ? 's' : ''} (biberons à 0 ml, sommeils vides ou en double)` : ''}</p></div><button class="btn primary block" id="napgo">Importer</button>`;
+      el.querySelector('#napgo').addEventListener('click', async () => {
+        const b = el.querySelector('#napgo'); b.disabled = true; b.textContent = 'Import en cours…';
+        try { await writeImport(add, upd); closeSheet(); toast(add.length + ' événements importés'); }
+        catch (e) { b.disabled = false; b.textContent = 'Réessayer'; toast(errMsg(e)); }
+      });
+    });
+  });
+}
+
+
+/* ---------- Views ---------- */
+const TYPES = {
+  sleep: { em: '🌙', name: 'Dodo', cls: 'c-sleep' },
+  feed: { em: '🤱', name: 'Tétée', cls: 'c-feed' },
+  bottle: { em: '🍼', name: 'Biberon', cls: 'c-bottle' },
+  diaper: { em: '🧷', name: 'Couche', cls: 'c-diaper' },
+  note: { em: '📝', name: 'Note', cls: 'c-note' },
+  bath: { em: '🛁', name: 'Bain', cls: 'c-bath' },
+  med: { em: '💊', name: 'Traitement', cls: 'c-med' },
+  growth: { em: '⚖️', name: 'Mesure', cls: 'c-growth' },
+  temp: { em: '🌡️', name: 'Température', cls: 'c-temp' },
+  visit: { em: '🩺', name: 'Rendez-vous', cls: 'c-visit' }
+};
+const numFr = (v, d) => Number(v).toLocaleString('fr-FR', { minimumFractionDigits: d === undefined ? 0 : d, maximumFractionDigits: d === undefined ? 3 : d });
+function growthParts(e) {
+  const p = [];
+  if (e.kg) p.push(numFr(e.kg) + ' kg');
+  if (e.height) p.push(numFr(e.height) + ' cm');
+  if (e.head) p.push('PC ' + numFr(e.head) + ' cm');
+  return p;
+}
+function recentMeds() { const seen = []; for (let i = S.events.length - 1; i >= 0 && seen.length < 5; i--) { const e = S.events[i]; if (e.type === 'med' && e.text && !seen.includes(e.text)) seen.push(e.text); } return seen; }
+function ring(ratio, color) {
+  const r = 52, C = 2 * Math.PI * r, p = ratio == null ? 1 : Math.max(0, Math.min(1, ratio));
+  return `<svg viewBox="0 0 120 120" class="ringsvg" aria-hidden="true"><circle cx="60" cy="60" r="${r}" class="track"/><circle cx="60" cy="60" r="${r}" class="prog" stroke="${color}" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - p)).toFixed(1)}" transform="rotate(-90 60 60)"/></svg>`;
+}
+function banner() {
+  let b = '';
+  if (S.newVersion) b += `<div class="banner warn" role="status" style="display:flex;align-items:center;gap:10px"><span style="flex:1"><b>Nouvelle version disponible.</b></span><button class="btn primary" data-act="apply-update" style="min-height:38px">Mettre à jour</button></div>`;
+  if (S.mode === 'local') b += `<div class="banner">Mode local : les données restent sur ce téléphone, sans synchronisation.</div>`;
+  if (S.mode === 'offline-start') b += `<div class="banner warn">Impossible de charger la synchronisation (pas de réseau ?). Recharge l'app une fois connecté.</div>`;
+  if (S.netWarn) b += `<div class="banner warn">Connexion lente : les données affichées ne sont peut-être pas à jour.</div>`;
+  if (S.dbError) b += `<div class="banner warn">${S.dbError === 'permission-denied' ? "Accès refusé : ton adresse e-mail n'est pas dans les règles Firebase (voir le guide, étape 4)." : "Synchronisation interrompue. Recharge l'app pour la relancer."}</div>`;
+  return b;
+}
+function header() {
+  const c = cfg(), a = ageText();
+  const h = new Date().getHours();
+  const hello = h < 5 || h >= 21 ? 'Bonne nuit' : h < 18 ? 'Bonjour' : 'Bonsoir';
+  return `<div class="top"><div><div class="muted small" style="font-weight:700">${hello}</div><h1>${esc(c.babyName)}</h1>${a ? `<span class="agepill">${a}</span>` : ''}</div>${resolvedTheme() === 'night' ? DECO_NIGHT : DECO_DAY}</div>`;
+}
+function statusCard(now, pr) {
+  const c = cfg(), on = ongoing('sleep'), name = esc(c.babyName);
+  if (on) {
+    const night = isNight(on);
+    const ratio = night ? null : (now - on.start) / pr.P.nap;
+    return `<section class="card status sleeping">
+      <div class="ring">${ring(ratio, night ? 'var(--sleep2)' : 'var(--sleep)')}<div class="ring-in"><div class="lbl breathe">${night ? 'Nuit' : 'Sieste'}</div><div class="big" data-since="${on.start}">${durClock(now - on.start)}</div></div></div>
+      <div class="st-txt"><h2>${name} dort 💤</h2>
+        <p class="muted">${gx('Endormi', 'Endormie')} à ${hm(on.start)} · <button class="link" data-act="edit" data-id="${esc(on.id)}">modifier</button></p>
+        ${pr.wake ? `<p>${night && pr.morning && pr.morning - pr.wake > HR ? 'Prochain réveil' : 'Réveil'} estimé vers <b>${hm(pr.wake)}</b></p>` : (night ? `<p class="muted">${gx('Il', 'Elle')} dort plus longtemps que d\u2019habitude</p>` : '')}
+        ${night && pr.morning && (!pr.wake || pr.morning - pr.wake > HR) ? `<p class="muted small">Lever du matin vers ${hm(pr.morning)}</p>` : ''}
+        <button class="btn primary" data-act="sleep">☀️ Noter le réveil</button></div></section>`;
+  }
+  const nx = pr.next;
+  if (!nx) return '';
+  const lw = pr.lastWake || now;
+  const span = Math.max(1, nx.start - lw), ratio = (now - lw) / span;
+  const col = ratio < 0.7 ? 'var(--ok)' : ratio < 1 ? 'var(--warn)' : 'var(--hot)';
+  const label = nx.kind === 'nap' ? 'Prochaine sieste' : nx.kind === 'bed' ? 'Coucher' : 'Rendormir vers';
+  const tol = Math.max(10 * MIN, pr.P.ww * 0.12);
+  let when;
+  if (nx.start > now) {
+    when = `<p class="muted">${label}</p><div class="when">${hm(nx.start)}</div><p class="muted">dans <b data-until="${nx.start}">${dur(nx.start - now)}</b> · entre ${hm(nx.start - tol)} et ${hm(nx.start + tol)}</p>`;
+  } else {
+    when = `<p class="muted">${label}</p><div class="when">Maintenant</div><p class="muted">Fenêtre ouverte depuis <b data-since-min="${nx.start}">${dur(now - nx.start)}</b></p>`;
+  }
+  return `<section class="card status ${ratio < 0.85 ? 'awake' : 'due'}">
+    <div class="ring">${ring(ratio, col)}<div class="ring-in"><div class="lbl">${gx('Éveillé', 'Éveillée')}</div><div class="big" data-since-short="${lw}">${dur(now - lw)}</div></div></div>
+    <div class="st-txt">${when}</div></section>`;
+}
+function runningFeed(now) {
+  const f = ongoing('feed'); if (!f) return '';
+  return `<section class="card running"><div class="t">🤱 Tétée sein ${sideName(f.side)} · <b data-since="${f.start}">${durClock(now - f.start)}</b></div>
+    <button class="btn" data-act="feed-switch">Changer de côté</button><button class="btn feed" data-act="feed-stop">Terminer</button></section>`;
+}
+function quickActions() {
+  const on = ongoing('sleep'), f = ongoing('feed');
+  const b = (act, t, label, active) => `<button class="qa${active ? ' on' : ''}" data-act="${act}"><span class="em">${TYPES[t].em}</span><span>${label}</span></button>`;
+  return `<div class="actions">${b('sleep', 'sleep', on ? 'Réveil' : 'Dodo', !!on)}${b('feed', 'feed', 'Tétée', !!f)}${b('bottle', 'bottle', 'Biberon')}${b('diaper', 'diaper', 'Couche')}<button class="qa" data-act="more"><span class="em">➕</span><span>Plus</span></button></div>`;
+}
+function infoRow(now) {
+  const m = lastMeal(), ls = lastSide();
+  const ds = S.events.filter(e => e.type === 'diaper'); const d = ds[ds.length - 1];
+  const meal = m ? (m.type === 'feed' && m.end == null ? 'en cours' : `il y a ${dur(now - (m.end || m.start))}`) : '—';
+  const mealSub = m ? (m.type === 'feed' ? 'sein ' + sideName(m.side) : (m.ml || '?') + ' ml') : 'aucun repas noté';
+  return `<div class="info-row">
+    <div class="info"><div class="k">Dernier repas</div><div class="v">${meal}</div><div class="k">${mealSub}${ls ? ' · prochain : ' + sideName(otherSide(ls)) : ''}</div></div>
+    <div class="info"><div class="k">Dernière couche</div><div class="v">${d ? 'il y a ' + dur(now - d.start) : '—'}</div><div class="k">${d ? esc(d.kind) : 'aucune notée'}</div></div></div>`;
+}
+function strip(now, pr) {
+  const s0 = startOfDay(now), s1 = s0 + DAY, pct = t => ((t - s0) / DAY * 100).toFixed(2);
+  let h = '';
+  for (const e of S.events) {
+    if (e.type === 'sleep') {
+      const a = Math.max(e.start, s0), b = Math.min(e.end == null ? now : e.end, s1);
+      if (b > a) h += `<div class="blk${isNight(e) ? ' night' : ''}" style="left:${pct(a)}%;width:${Math.max(0.4, (b - a) / DAY * 100).toFixed(2)}%"></div>`;
+    } else if (e.start >= s0 && e.start < s1) {
+      if (e.type === 'feed' || e.type === 'bottle') h += `<div class="tick" style="left:${pct(e.start)}%;background:var(--${e.type})"></div>`;
+      if (e.type === 'diaper') h += `<div class="dot" style="left:${pct(e.start)}%"></div>`;
+    }
+  }
+  for (const it of pr.items) { const a = Math.max(it.start, s0), b = Math.min(it.end, s1); if (b > a) h += `<div class="blk pred" style="left:${pct(a)}%;width:${((b - a) / DAY * 100).toFixed(2)}%"></div>`; }
+  if (pr.bedtime && pr.bedtime < s1) h += `<div class="bed" style="left:${pct(pr.bedtime)}%" title="Coucher prévu"></div>`;
+  h += `<div class="now" style="left:${pct(now)}%"></div>`;
+  return `<div class="strip" role="img" aria-label="Frise de la journée">${h}</div><div class="hours"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>24h</span></div>`;
+}
+function planList(now, pr) {
+  const s0 = startOfDay(now);
+  const rows = [];
+  const today = sleeps().filter(s => (s.end == null ? now : s.end) >= s0 && s.start < s0 + DAY);
+  let napN = 0;
+  for (const s of today) {
+    if (isNight(s) && s.start < s0) {
+      if (s.end) rows.push({ t: s.end, ic: '🌙', ttl: 'Fin de la nuit', sub: 'Réveil à ' + hm(s.end) + ' · ' + dur(s.end - s.start), id: s.id });
+      continue;
+    }
+    if (isNight(s)) {
+      const morning = minutesOf(s.start) < 12 * 60;
+      rows.push({ t: s.start, ic: '🌙', ttl: morning ? 'Nuit' : 'Coucher', sub: hm(s.start) + ' – ' + (s.end ? hm(s.end) + ' · ' + dur(s.end - s.start) : 'en cours'), id: s.id }); continue;
+    }
+    napN++;
+    rows.push({ t: s.start, ic: '😴', ttl: 'Sieste ' + napN, sub: hm(s.start) + ' – ' + (s.end ? hm(s.end) + ' · ' + dur(s.end - s.start) : 'en cours'), id: s.id });
+  }
+  for (const it of pr.items) { napN++; rows.push({ t: it.start, ic: '😴', ttl: 'Sieste ' + napN + ' (prévue)', sub: hm(it.start) + ' – ' + hm(it.end) + ' · ' + dur(it.end - it.start), pred: true }); }
+  if (pr.bedtime) rows.push({ t: pr.bedtime, ic: '🌙', ttl: 'Coucher (prévu)', sub: 'vers ' + hm(pr.bedtime), pred: true });
+  if (!rows.length) return `<div class="empty"><span class="em">🌤️</span>Note le premier dodo ou le réveil du matin pour lancer le planning.</div>`;
+  return `<ul class="list">${rows.map(r => {
+    const inner = `<span class="ic">${r.ic}</span><span class="main"><span class="ttl">${r.ttl}</span><br><span class="sub">${r.sub}</span></span><span class="tm">${hm(r.t)}</span>`;
+    return `<li class="${r.pred ? 'pred' : 'done'}">${r.id ? `<button class="rowbtn" data-act="edit" data-id="${esc(r.id)}">${inner}</button>` : inner}</li>`;
+  }).join('')}</ul>`;
+}
+function healthCards(now) {
+  let h = '';
+  const fever = S.events.filter(e => e.type === 'temp' && e.c >= 38 && now - e.start < 12 * HR && e.start <= now).pop();
+  if (fever) {
+    const young = birthTime() != null && (now - birthTime()) / DAY < 91;
+    h += `<section class="card alert" role="alert"><b>🌡️ ${numFr(fever.c, 1)} °C noté à ${hm(fever.start)}</b><p class="small" style="margin-top:4px">${young ? 'Avant 3 mois, une fièvre de 38 °C ou plus demande d\u2019appeler le médecin rapidement. Appelle le 15 s\u2019il est difficile à réveiller, respire mal, refuse de boire ou a un teint inhabituel.' : 'Surveille-le et appelle le médecin si la fièvre persiste ou s\u2019il a l\u2019air mal. Appelle le 15 en cas de signe inquiétant.'}</p></section>`;
+  }
+  const next = S.events.filter(e => e.type === 'visit' && e.start > now).sort((a, b) => a.start - b.start)[0];
+  if (next) {
+    h += `<button class="card upcoming" data-act="edit" data-id="${esc(next.id)}" style="width:100%;text-align:left"><span class="ic">🩺</span><span><span class="small muted" style="display:block;font-weight:700">Prochain rendez-vous</span><b>${esc(next.text || 'Rendez-vous')}</b> · ${cap(new Date(next.start).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }))} à ${hm(next.start)}</span></button>`;
+  }
+  return h;
+}
+function viewHome(now) {
+  if (S.mode === 'loading' || (S.mode === 'sync' && !S.loaded)) return header() + '<div class="skel"></div><div class="skel" style="height:80px"></div>';
+  const pr = predict(now);
+  const learn = pr.P.learning ? `<p class="small faint" style="margin:6px 2px 0">Prédictions basées sur l'âge pour l'instant : elles s'affinent après environ une semaine de suivi.</p>` : '';
+  return header() + healthCards(now) + statusCard(now, pr) + runningFeed(now) + quickActions() + infoRow(now)
+    + `<div class="sec-title"><h3>Planning du jour</h3></div><div class="card">${strip(now, pr)}<div style="height:6px"></div>${planList(now, pr)}</div>${learn}`;
+}
+function evTitle(e) {
+  if (e.type === 'sleep') return (isNight(e) ? 'Nuit' : 'Sieste') + ' · ' + (e.end ? dur(e.end - e.start) : 'en cours');
+  if (e.type === 'feed') return 'Tétée sein ' + sideName(e.side) + (e.end ? ' · ' + dur(e.end - e.start) : ' · en cours');
+  if (e.type === 'bottle') return 'Biberon ' + (e.ml || '?') + ' ml';
+  if (e.type === 'diaper') return 'Couche · ' + esc(e.kind || '');
+  if (e.type === 'bath') return 'Bain' + (e.min ? ' · ' + e.min + ' min' : '');
+  if (e.type === 'med') return 'Traitement';
+  if (e.type === 'growth') return 'Mesure';
+  if (e.type === 'temp') return 'Température · ' + numFr(e.c, 1) + ' °C';
+  if (e.type === 'visit') return (e.start > Date.now() ? 'Rendez-vous à venir' : 'Rendez-vous') + (e.text ? ' · ' + esc(e.text) : '');
+  return 'Note';
+}
+function evSub(e) {
+  if (e.type === 'sleep' || e.type === 'feed') return hm(e.start) + ' – ' + (e.end ? hm(e.end) : '…');
+  if (e.type === 'bottle') return e.milk === 'maternel' ? 'Lait maternel' : 'Lait infantile';
+  if (e.type === 'note' || e.type === 'med') return esc((e.text || '').slice(0, 90));
+  if (e.type === 'growth') return growthParts(e).join(' · ');
+  if (e.type === 'visit') return (e.start > Date.now() ? cap(new Date(e.start).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })) + ' · ' : '') + esc((e.notes || '').slice(0, 80));
+  if (e.type === 'temp') return e.c >= 38 ? 'Fièvre' : '';
+  return '';
+}
+function viewJournal(now) {
+  const evs = [...S.events].reverse();
+  const head = `<div class="top"><h1>Journal</h1><button class="btn" data-act="add">+ Ajouter</button></div>`;
+  if (!evs.length) return head + `<div class="card empty"><span class="em">📒</span>Rien de noté pour l'instant. Utilise les boutons de l'onglet Aujourd'hui.</div>`;
+  const limit = dayKey(now - (S.journalDays - 1) * DAY);
+  const groups = new Map();
+  for (const e of evs) { const k = dayKey(e.start); if (k < limit) continue; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(e); }
+  let h = head;
+  for (const [k, list] of groups) {
+    h += `<div class="dayhead">${dayLabel(k)}</div><div class="card" style="padding:4px 14px"><ul class="list">` + list.map(e => {
+      const w = whoName(e.by);
+      return `<li><button class="rowbtn" data-act="edit" data-id="${esc(e.id)}"><span class="ic ${TYPES[e.type].cls}">${TYPES[e.type].em}</span><span class="main"><span class="ttl">${evTitle(e)}</span>${w ? `<span class="who">${esc(w)}</span>` : ''}<br><span class="sub">${evSub(e)}</span></span><span class="tm">${hm(e.start)}</span></button></li>`;
+    }).join('') + `</ul></div>`;
+  }
+  if (evs.some(e => dayKey(e.start) < limit)) h += `<button class="btn block" data-act="journal-more" style="margin-top:8px">Afficher plus</button>`;
+  return h;
+}
+function dayStats(ds, now) {
+  const de = ds + DAY; let day = 0, night = 0, naps = 0, feeds = 0, bottles = 0, ml = 0, dia = 0;
+  for (const e of S.events) {
+    if (e.type === 'sleep') {
+      const o = overlap(e.start, e.end == null ? now : e.end, ds, de);
+      if (o) { if (isNight(e)) night += o; else day += o; }
+      if (!isNight(e) && e.start >= ds && e.start < de) naps++;
+    } else if (e.start >= ds && e.start < de) {
+      if (e.type === 'feed') feeds++;
+      if (e.type === 'bottle') { bottles++; ml += Number(e.ml) || 0; }
+      if (e.type === 'diaper') dia++;
+    }
+  }
+  return { ds, day, night, naps, feeds, bottles, ml, dia, any: day + night + feeds + bottles + dia > 0 };
+}
+function chart(days) {
+  const W = 320, Hh = 170, pl = 26, pb = 22, pt = 8, maxH = Math.max(16, Math.ceil(Math.max(...days.map(d => (d.day + d.night) / HR)) / 4) * 4);
+  const bw = (W - pl) / days.length, y = h => pt + (Hh - pt - pb) * (1 - h / maxH);
+  let g = '';
+  for (let h = 0; h <= maxH; h += 4) g += `<line x1="${pl}" x2="${W}" y1="${y(h)}" y2="${y(h)}" stroke="var(--border)"/><text x="${pl - 6}" y="${y(h) + 4}" text-anchor="end" font-size="10" fill="var(--faint)">${h}h</text>`;
+  days.forEach((d, i) => {
+    const x = pl + i * bw + bw * 0.2, w = bw * 0.6, n = d.night / HR, dd = d.day / HR;
+    if (n > 0) g += `<rect x="${x}" y="${y(n)}" width="${w}" height="${y(0) - y(n)}" rx="6" fill="var(--sleep2)"><title>Nuit ${dur(d.night)}</title></rect>`;
+    if (dd > 0) g += `<rect x="${x}" y="${y(n + dd)}" width="${w}" height="${y(n) - y(n + dd)}" rx="6" fill="var(--sleep)"><title>Siestes ${dur(d.day)}</title></rect>`;
+    g += `<text x="${x + w / 2}" y="${Hh - 6}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${new Date(d.ds).toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Heures de sommeil sur 7 jours">${g}</svg>`;
+}
+function statsTabs() {
+  const b = (v, l) => `<button data-act="stats-tab" data-v="${v}" aria-pressed="${S.statsTab === v}">${l}</button>`;
+  return `<div class="tabs" role="tablist">${b('sleep', 'Sommeil & repas')}${b('growth', 'Croissance')}</div><button class="btn block reportbtn" data-act="report">📄 Rapport PDF pour le pédiatre</button>`;
+}
+function lineChart(pts, dec, label, metric) {
+  const W = 320, H = 190, pl = 38, pr = metric ? 26 : 12, pt = 14, pb = 26;
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+  const x1 = Math.max(28, Math.ceil((Math.max(...xs) + 8) / 7) * 7);
+  let lo = Math.min(...ys), hi = Math.max(...ys);
+  let curves = [];
+  if (metric && birthTime() != null && (cfg().sex === 'M' || cfg().sex === 'F')) {
+    curves = CENTILES.map(([p, z]) => { const c = []; for (let a = 0; a <= x1; a += Math.max(1, x1 / 60)) { const l = whoLMS(metric, a); if (l) c.push({ x: a, y: whoValue(l, z) }); } return { p, c }; }).filter(c => c.c.length);
+    curves.forEach(cv => cv.c.forEach(q => { lo = Math.min(lo, q.y); hi = Math.max(hi, q.y); }));
+  }
+  const minSpan = dec >= 2 ? 0.6 : 3;
+  if (hi - lo < minSpan) { const m = (hi + lo) / 2; lo = m - minSpan / 2; hi = m + minSpan / 2; }
+  const pad = (hi - lo) * 0.12; lo -= pad; hi += pad;
+  const X = x => pl + (W - pl - pr) * (x / x1), Y = y => pt + (H - pt - pb) * (1 - (y - lo) / (hi - lo));
+  let g = '';
+  for (let i = 0; i <= 4; i++) { const v = lo + (hi - lo) * i / 4; g += `<line x1="${pl}" x2="${W - pr}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="var(--border)"/><text x="${pl - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="var(--faint)">${numFr(v, dec >= 2 || hi - lo < 8 ? 1 : 0)}</text>`; }
+  const weeks = x1 / 7, step = Math.max(1, Math.ceil(weeks / 6));
+  for (let w = 0; w <= weeks; w += step) g += `<text x="${X(w * 7).toFixed(1)}" y="${H - 8}" text-anchor="middle" font-size="10" fill="var(--muted)">${w === 0 ? 'naiss.' : w + ' sem'}</text>`;
+  curves.forEach(cv => {
+    const d = cv.c.map((q, i) => (i ? 'L' : 'M') + X(q.x).toFixed(1) + ' ' + Y(q.y).toFixed(1)).join(' ');
+    g += `<path d="${d}" fill="none" stroke="var(--faint)" stroke-width="${cv.p === 50 ? 1.4 : 1}" ${cv.p === 50 ? '' : 'stroke-dasharray="3 3"'} opacity="${cv.p === 50 ? .9 : .7}"/>`;
+    const l = cv.c[cv.c.length - 1]; g += `<text x="${(X(l.x) + 3).toFixed(1)}" y="${(Y(l.y) + 3).toFixed(1)}" font-size="9" fill="var(--faint)">P${cv.p}</text>`;
+  });
+  const sp = [...pts].sort((a, b) => a.x - b.x);
+  const path = sp.map((p, i) => (i ? 'L' : 'M') + X(p.x).toFixed(1) + ' ' + Y(p.y).toFixed(1)).join(' ');
+  if (sp.length > 1) g += `<path d="${path} L${X(sp[sp.length - 1].x).toFixed(1)} ${H - pb} L${X(sp[0].x).toFixed(1)} ${H - pb} Z" fill="var(--sleep)" opacity=".12"/><path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  sp.forEach((p, i) => { g += `<circle cx="${X(p.x).toFixed(1)}" cy="${Y(p.y).toFixed(1)}" r="${i === sp.length - 1 ? 5 : 3.5}" fill="${i === sp.length - 1 ? 'var(--accent)' : 'var(--surface)'}" stroke="var(--accent)" stroke-width="2"><title>${numFr(p.y, dec)} — ${new Date(p.t).toLocaleDateString('fr-FR')}</title></circle>`; });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}">${g}</svg>`;
+}
+function viewGrowth(now) {
+  const ms = S.events.filter(e => e.type === 'growth');
+  let h = `<div class="top"><h1>Statistiques</h1><button class="btn" data-act="add-measure">+ Mesure</button></div>` + statsTabs();
+  if (!ms.length) return h + `<div class="card empty"><span class="em">⚖️</span>Aucune mesure pour l'instant.<br><button class="btn primary" data-act="add-measure" style="margin-top:12px">Ajouter une mesure</button></div>`;
+  const c = cfg(), birthT = c.birth ? new Date(c.birth + 'T12:00').getTime() : ms[0].start;
+  const pt = (e, k) => ({ x: Math.max(0, birthTime() != null ? whoAgeDays(e.start) : (e.start - birthT) / DAY), y: e[k], t: e.start });
+  const cen = (metric, e) => { const x = whoCentile(metric, e); return x ? ' · ' + centileText(x) : ''; };
+  const W = ms.filter(m => m.kg), L = ms.filter(m => m.height), P = ms.filter(m => m.head);
+  const dshort = t => new Date(t).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+  const k = (label, v, sub) => `<div class="kpi"><div class="k">${label}</div><div class="v">${v}</div>${sub ? `<div class="k">${sub}</div>` : ''}</div>`;
+  let kp = '';
+  if (W.length) {
+    const last = W[W.length - 1], first = W[0];
+    kp += k('Poids', numFr(last.kg, 2) + ' kg', 'le ' + dshort(last.start) + cen('kg', last));
+    const refs = W.filter(w => w.start <= last.start - 7 * DAY);
+    const ref = refs.length ? refs.reduce((a, b) => (Math.abs((last.start - b.start) / DAY - 14) < Math.abs((last.start - a.start) / DAY - 14) ? b : a)) : null;
+    if (ref) { const d = (last.start - ref.start) / DAY, gpd = (last.kg - ref.kg) * 1000 / d; kp += k('Prise récente', (gpd >= 0 ? '+' : '') + Math.round(gpd) + ' g/jour', 'sur ' + Math.round(d) + ' jours'); }
+    else kp += k('Prise récente', '—', 'il faut 2 pesées à 7 jours d\u2019écart');
+    if (W.length > 1) kp += k('Depuis la 1re pesée', ((last.kg - first.kg) >= 0 ? '+' : '') + Math.round((last.kg - first.kg) * 1000) + ' g', numFr(first.kg, 2) + ' kg le ' + dshort(first.start));
+  }
+  if (L.length) { const l = L[L.length - 1]; kp += k('Taille', numFr(l.height, 1) + ' cm', 'le ' + dshort(l.start) + cen('height', l)); }
+  if (P.length) { const q = P[P.length - 1]; kp += k('Périmètre crânien', numFr(q.head, 1) + ' cm', 'le ' + dshort(q.start) + cen('head', q)); }
+  h += `<div class="kpis">${kp}</div>`;
+  if (W.length) h += `<div class="sec-title"><h3>Poids (kg)</h3></div><div class="card gchart">${lineChart(W.map(e => pt(e, 'kg')), 3, 'Courbe de poids', 'kg')}</div>`;
+  if (L.length) h += `<div class="sec-title"><h3>Taille (cm)</h3></div><div class="card gchart">${lineChart(L.map(e => pt(e, 'height')), 1, 'Courbe de taille', 'height')}</div>`;
+  if (P.length) h += `<div class="sec-title"><h3>Périmètre crânien (cm)</h3></div><div class="card gchart">${lineChart(P.map(e => pt(e, 'head')), 1, 'Courbe du périmètre crânien', 'head')}</div>`;
+  h += `<div class="sec-title"><h3>Toutes les mesures</h3></div><div class="card" style="padding:4px 14px"><ul class="list">` + [...ms].reverse().map(e =>
+    `<li><button class="rowbtn" data-act="edit" data-id="${esc(e.id)}"><span class="ic c-growth">⚖️</span><span class="main"><span class="ttl">${growthParts(e).join(' · ')}</span><br><span class="sub">${cap(new Date(e.start).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }))}</span></span></button></li>`).join('') + `</ul></div>`;
+  const pw = Number(c.premWeeks) || 0;
+  h += `<p class="small faint" style="margin:8px 2px 0">${birthTime() != null && !(cfg().sex === 'M' || cfg().sex === 'F') ? 'Indique le sexe du bébé dans les réglages pour afficher les courbes OMS. ' : ''}${birthTime() != null && (cfg().sex === 'M' || cfg().sex === 'F') ? `Pointillés : courbes de référence ${whoLabel()} (P3, P15, P50 en trait plein, P85, P97)${pw ? `, en âge corrigé (${gx('né', 'née')} à ${c.gaWeeks} SA)` : ''}. Un bébé né petit ou avant terme suit souvent sa propre courbe : c'est la régularité de la progression qui compte, et le pédiatre est le mieux placé pour l'interpréter.` : 'Ajoute la date de naissance dans les réglages pour afficher les courbes OMS.'}</p>`;
+  return h;
+}
+function viewStats(now) {
+  if (S.statsTab === 'growth') return viewGrowth(now);
+  const t0 = startOfDay(now), days = [];
+  for (let i = 6; i >= 0; i--) days.push(dayStats(t0 - i * DAY, now));
+  const past = days.slice(0, 6).filter(d => d.any);
+  const avg = f => past.length ? past.reduce((s, d) => s + f(d), 0) / past.length : null;
+  const P = params();
+  const k = (label, v) => `<div class="kpi"><div class="k">${label}</div><div class="v">${v}</div></div>`;
+  const fmtH = v => v == null ? '—' : dur(v);
+  const fmtN = v => v == null ? '—' : (Math.round(v * 10) / 10).toString().replace('.', ',');
+  let h = `<div class="top"><h1>Statistiques</h1><span class="age">7 derniers jours</span></div>` + statsTabs();
+  h += `<div class="card chart">${chart(days)}<div class="legend"><span><i style="background:var(--sleep2)"></i>Nuit</span><span><i style="background:var(--sleep)"></i>Siestes</span></div></div>`;
+  h += `<div class="kpis">${k('Sommeil / 24 h', fmtH(avg(d => d.day + d.night)))}${k('Siestes / jour', fmtN(avg(d => d.naps)))}${k('Fenêtre d’éveil', dur(P.ww))}${k('Sieste type', dur(P.nap))}${k('Repas / jour', fmtN(avg(d => d.feeds + d.bottles)))}${k('Lait / jour', avg(d => d.ml) ? Math.round(avg(d => d.ml)) + ' ml' : '—')}${k('Nuit / 24 h', fmtH(avg(d => d.night)))}${k('Couches / jour', fmtN(avg(d => d.dia)))}</div>`;
+  h += `<p class="small faint" style="margin:8px 2px 0">Moyennes sur les jours complets suivis (${past.length}). Fenêtre d'éveil et sieste type : ${P.p.wwN ? 'calculées sur ' + P.p.wwN + ' éveils récents, ajustées à l’âge' : 'valeurs de référence pour l’âge'}.</p>`;
+  h += `<div class="sec-title"><h3>Détail par jour</h3></div><div class="card" style="padding:8px 12px"><table class="tbl"><thead><tr><th>Jour</th><th>Nuit</th><th>Siestes (nb)</th><th>Repas</th><th>Couches</th></tr></thead><tbody>`
+    + [...days].reverse().map(d => `<tr><td>${dayKey(d.ds) === dayKey(now) ? 'Auj.' : cap(new Date(d.ds).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' }))}</td><td>${d.night ? dur(d.night) : '—'}</td><td>${d.naps ? dur(d.day) + ' (' + d.naps + ')' : '—'}</td><td>${d.feeds + d.bottles || '—'}${d.ml ? ' · ' + d.ml + ' ml' : ''}</td><td>${d.dia || '—'}</td></tr>`).join('')
+    + `</tbody></table></div>`;
+  return h;
+}
+
+/* ---------- Sounds ---------- */
+const SOUNDS = [
+  { id: 'white', em: '🌫️', name: 'Bruit blanc' }, { id: 'pink', em: '🌸', name: 'Bruit rose' },
+  { id: 'brown', em: '🟤', name: 'Bruit brun' }, { id: 'rain', em: '🌧️', name: 'Pluie' },
+  { id: 'ocean', em: '🌊', name: 'Vagues' }, { id: 'fan', em: '🌀', name: 'Ventilateur' },
+  { id: 'shush', em: '🤫', name: 'Chut-chut' }, { id: 'heart', em: '💗', name: 'Cœur (ventre)' },
+  { id: 'clair', em: '🌛', name: 'Au clair de la lune' }, { id: 'jacques', em: '🔔', name: 'Frère Jacques' }
+];
+/* Moteur audio : chaque son est calculé une fois (OfflineAudioContext), converti en WAV,
+   puis joué en boucle par un élément <audio>. Contrairement au Web Audio direct, cela
+   fonctionne même quand l'iPhone est en mode silencieux, et continue écran verrouillé. */
+const A = { cur: null, pending: null, stopAt: null, timerMin: 0, vol: 0.8, urls: {}, el: null, fadeIv: null };
+const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
+function audioEl() {
+  if (!A.el) {
+    A.el = document.createElement('audio');
+    A.el.loop = true; A.el.preload = 'auto';
+    A.el.setAttribute('playsinline', ''); A.el.setAttribute('webkit-playsinline', '');
+    document.body.appendChild(A.el);
+  }
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+  return A.el;
+}
+const NOTE = n => 440 * Math.pow(2, (n - 69) / 12);
+const MELODIES = {
+  clair: [[72,1],[72,1],[72,1],[74,1],[76,2],[74,2],[72,1],[76,1],[74,1],[74,1],[72,4],
+          [72,1],[72,1],[72,1],[74,1],[76,2],[74,2],[72,1],[76,1],[74,1],[74,1],[72,4],
+          [74,1],[74,1],[74,1],[74,1],[69,2],[69,2],[74,1],[72,1],[71,1],[69,1],[67,4],
+          [72,1],[72,1],[72,1],[74,1],[76,2],[74,2],[72,1],[76,1],[74,1],[74,1],[72,4],[0,2]],
+  jacques: [[72,1],[74,1],[76,1],[72,1],[72,1],[74,1],[76,1],[72,1],[76,1],[77,1],[79,2],[76,1],[77,1],[79,2],
+            [79,.5],[81,.5],[79,.5],[77,.5],[76,1],[72,1],[79,.5],[81,.5],[79,.5],[77,.5],[76,1],[72,1],
+            [72,1],[67,1],[72,2],[72,1],[67,1],[72,2],[0,2]]
+};
+const BEAT = 0.46, HEART = 0.86;
+function loopLength(id) {
+  if (MELODIES[id]) return MELODIES[id].reduce((s, n) => s + n[1], 0) * BEAT;
+  if (id === 'heart') return HEART * 24;
+  return 20;
+}
+function makeNoise(c, kind, seconds) {
+  const len = Math.floor(c.sampleRate * seconds), buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+  let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0, last = 0;
+  for (let i = 0; i < len; i++) {
+    const w = Math.random() * 2 - 1;
+    if (kind === 'white') d[i] = w * 0.5;
+    else if (kind === 'pink') {
+      b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759; b2 = 0.96900 * b2 + w * 0.1538520;
+      b3 = 0.86650 * b3 + w * 0.3104856; b4 = 0.55000 * b4 + w * 0.5329522; b5 = -0.7616 * b5 - w * 0.0168980;
+      d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11; b6 = w * 0.115926;
+    } else { last = (last + 0.02 * w) / 1.02; d[i] = last * 3.5; }
+  }
+  return buf;
+}
+function buildGraph(c, id, total) {
+  const out = c.destination;
+  const gain = (v, dest) => { const g = c.createGain(); g.gain.value = v; g.connect(dest); return g; };
+  const filt = (type, f, q, dest) => { const n = c.createBiquadFilter(); n.type = type; n.frequency.value = f; if (q) n.Q.value = q; n.connect(dest); return n; };
+  const noise = (kind, dest) => { const s = c.createBufferSource(); s.buffer = makeNoise(c, kind, total); s.connect(dest); s.start(0); };
+  const lfo = (rate, depth, param) => { const o = c.createOscillator(); o.frequency.value = rate; const g = c.createGain(); g.gain.value = depth; o.connect(g); g.connect(param); o.start(0); };
+  if (id === 'white') noise('white', gain(0.35, out));
+  else if (id === 'pink') noise('pink', gain(0.7, out));
+  else if (id === 'brown') noise('brown', gain(0.7, out));
+  else if (id === 'rain') { noise('pink', filt('highpass', 500, 0, filt('lowpass', 6500, 0, gain(0.7, out)))); noise('white', filt('highpass', 4000, 0, gain(0.06, out))); }
+  else if (id === 'ocean') { const g = gain(0.45, out); lfo(0.1, 0.38, g.gain); noise('brown', filt('lowpass', 1100, 0, g)); }
+  else if (id === 'fan') { noise('brown', filt('lowpass', 520, 0, gain(0.9, out))); noise('pink', filt('bandpass', 1300, 0.7, gain(0.12, out))); }
+  else if (id === 'shush') { const g = gain(0.22, out); lfo(0.5, 0.2, g.gain); noise('white', filt('bandpass', 2800, 0.8, g)); }
+  else if (id === 'heart') {
+    noise('brown', filt('lowpass', 300, 0, gain(0.25, out)));
+    const dest = filt('lowpass', 180, 0, gain(1, out));
+    const thump = (t, v) => {
+      const o = c.createOscillator(), g = c.createGain(); o.type = 'sine';
+      o.frequency.setValueAtTime(70, t); o.frequency.exponentialRampToValueAtTime(40, t + 0.15);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0008, t + 0.22);
+      o.connect(g); g.connect(dest); o.start(t); o.stop(t + 0.25);
+    };
+    for (let t = 0.05; t < total; t += HEART) { thump(t, 0.9); thump(t + 0.3, 0.55); }
+  } else if (MELODIES[id]) {
+    noise('pink', filt('lowpass', 900, 0, gain(0.08, out)));
+    const dest = gain(0.8, out), mel = MELODIES[id];
+    let t = 0.05, i = 0;
+    while (t < total) {
+      const [n, b] = mel[i], len = b * BEAT;
+      if (n) {
+        const g = c.createGain(); g.connect(dest);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.32, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0008, t + len * 1.7 + 0.4);
+        const o1 = c.createOscillator(); o1.frequency.value = NOTE(n); o1.connect(g);
+        const g2 = c.createGain(); g2.gain.value = 0.18; g2.connect(g);
+        const o2 = c.createOscillator(); o2.frequency.value = NOTE(n + 12); o2.connect(g2);
+        [o1, o2].forEach(o => { o.start(t); o.stop(t + len * 1.7 + 0.5); });
+      }
+      t += len; i = (i + 1) % mel.length;
+    }
+  }
+}
+function toWav(data, sr) {
+  const n = data.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const str = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, sr, true);
+  v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); str(36, 'data'); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) { const s = Math.max(-1, Math.min(1, data[i])); v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true); }
+  return new Blob([buf], { type: 'audio/wav' });
+}
+async function renderSound(id) {
+  if (A.urls[id]) return A.urls[id];
+  const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  if (!OAC) throw new Error('no-offline-audio');
+  const sr = 32000, L = loopLength(id), X = 0.5, total = L + X;
+  const c = new OAC(1, Math.ceil(sr * total), sr);
+  buildGraph(c, id, total);
+  const rendered = await new Promise((res, rej) => {
+    const p = c.startRendering(); c.oncomplete = e => res(e.renderedBuffer);
+    if (p && p.then) p.then(res, rej);
+  });
+  const src = rendered.getChannelData(0), n = Math.floor(sr * L), f = Math.floor(sr * X), out = new Float32Array(n);
+  out.set(src.subarray(0, n));
+  for (let i = 0; i < f; i++) { const g = i / f; out[i] = src[i] * g + src[n + i] * (1 - g); } // fondu pour une boucle sans couture
+  let peak = 0, sq = 0; for (let i = 0; i < n; i++) { const x = out[i]; peak = Math.max(peak, Math.abs(x)); sq += x * x; }
+  const rms = Math.sqrt(sq / n), k = Math.min(0.2 / (rms || 1), 0.95 / (peak || 1)); // volume homogène et bien audible
+  for (let i = 0; i < n; i++) out[i] *= k;
+  return (A.urls[id] = URL.createObjectURL(toWav(out, sr)));
+}
+function startSound(id) {
+  const el = audioEl();
+  clearInterval(A.fadeIv); A.fadeIv = null;
+  A.cur = id; A.pending = id;
+  A.stopAt = A.timerMin ? Date.now() + A.timerMin * MIN : null;
+  // Débloque la lecture tout de suite, pendant le geste de l'utilisateur (exigé par iOS)
+  if (!A.urls[id]) { el.src = SILENT_WAV; const p = el.play(); if (p && p.catch) p.catch(() => {}); }
+  renderSound(id).then(url => {
+    if (A.pending !== id) return;
+    el.src = url; el.volume = A.vol; el.currentTime = 0;
+    const p = el.play();
+    if (p && p.catch) p.catch(() => { if (A.cur === id) { A.cur = null; render(); toast('Touche à nouveau le son pour le lancer.'); } });
+    A.pending = null; render();
+    SOUNDS.forEach((s, k) => { if (!A.urls[s.id]) setTimeout(() => renderSound(s.id).catch(() => {}), 400 + k * 250); });
+  }).catch(() => { A.cur = null; A.pending = null; render(); toast('Lecture audio impossible sur cet appareil.'); });
+}
+function stopSound(fade) {
+  const el = A.el; A.cur = null; A.pending = null; A.stopAt = null;
+  clearInterval(A.fadeIv); A.fadeIv = null;
+  if (!el) return;
+  if (!fade) { el.pause(); return; }
+  let v = el.volume;
+  try { el.volume = v * 0.9; } catch (e) {}
+  if (Math.abs(el.volume - v * 0.9) > 0.02) { el.pause(); return; } // volume non réglable (iPhone) : arrêt simple
+  const step = v / 30;
+  A.fadeIv = setInterval(() => {
+    v = Math.max(0, v - step);
+    try { el.volume = v; } catch (e) {}
+    if (v <= 0) { clearInterval(A.fadeIv); A.fadeIv = null; el.pause(); try { el.volume = A.vol; } catch (e) {} }
+  }, 200);
+}
+function viewSounds() {
+  const tm = [[15, '15 min'], [30, '30 min'], [60, '1 h'], [0, 'Sans fin']];
+  let h = `<div class="top"><h1>Sons</h1></div>`;
+  h += `<div class="card player"><div class="row" style="align-items:center">${A.cur ? '<div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i></div>' : ''}<div style="flex:1"><div class="muted small">En cours</div><div class="serif" style="font-size:20px">${A.cur ? esc(SOUNDS.find(s => s.id === A.cur).name) : 'Aucun son'}</div>${A.pending ? '<div class="small muted">Préparation du son…</div>' : ''}${A.stopAt ? `<div class="small muted">Arrêt dans <b data-until-clock="${A.stopAt}">${durClock(A.stopAt - Date.now())}</b></div>` : ''}</div>${A.cur ? '<button class="btn" data-act="snd-stop">Arrêter</button>' : ''}</div>
+    <label class="field" style="margin:0"><span>Volume</span><input type="range" min="0" max="1" step="0.01" value="${A.vol}" id="vol" aria-label="Volume"><span class="small faint" style="display:block;margin-top:4px;font-weight:600">Sur iPhone, règle le volume avec les boutons du téléphone.</span></label>
+    <div><div class="muted small" style="margin-bottom:6px">Minuterie</div><div class="chips">${tm.map(([v, l]) => `<button class="chip" data-act="snd-timer" data-v="${v}" aria-pressed="${A.timerMin === v}">${l}</button>`).join('')}</div></div></div>`;
+  h += `<div class="sounds">${SOUNDS.map(s => `<button class="snd${A.cur === s.id ? ' on' : ''}" data-act="snd" data-id="${s.id}" aria-pressed="${A.cur === s.id}"><span class="em">${s.em}</span><span class="nm">${s.name}</span></button>`).join('')}</div>`;
+  h += `<p class="small faint" style="margin:10px 2px 0">Les sons fonctionnent même en mode silencieux. Garde l'app ouverte : selon le téléphone, le son peut s'arrêter si tu changes d'app. Volume modéré, téléphone à distance du lit.</p>`;
+  return h;
+}
+
+/* ---------- Settings ---------- */
+function viewSettings() {
+  const c = cfg();
+  let h = `<div class="top"><h1>Réglages</h1></div><form class="card" id="cfgf">
+    <label class="field"><span>Prénom du bébé</span><input name="babyName" value="${esc(c.babyName)}" maxlength="40" autocomplete="off"></label>
+    <div class="field"><span>Sexe</span>${seg('sex', [['M', 'Garçon'], ['F', 'Fille']], c.sex || '')}</div>
+    <label class="field"><span>Date de naissance</span><input type="date" name="birth" value="${esc(c.birth)}"></label>
+    <div class="row"><label class="field" style="flex:1"><span>Réveil habituel</span><input type="time" name="wakeTime" value="${esc(c.wakeTime)}"></label>
+    <label class="field" style="flex:1"><span>Coucher souhaité</span><input type="time" name="bedtime" value="${esc(c.bedtime)}"></label></div>
+    <label class="field"><span>Terme à la naissance (semaines d'aménorrhée, SA)</span><input type="number" name="gaWeeks" inputmode="numeric" min="22" max="43" step="1" value="${esc(c.gaWeeks || '')}" placeholder="ex. 39 — indiqué dans le carnet de santé"></label>
+    <p class="hint">Avant 37 SA, l'app place ses mesures sur les courbes OMS en âge corrigé, comme le pédiatre. Laisse vide si tu ne sais pas.</p>
+    <button class="btn primary block" type="submit">Enregistrer les réglages</button></form>`;
+  const sync = S.mode === 'sync'
+    ? `<p>✓ Synchronisé avec Firebase. Ce que vous notez apparaît sur vos deux téléphones, même après un passage hors connexion.</p>
+       <p class="small muted" style="margin:8px 0 10px">Connecté : ${esc(S.userEmail || '')}</p>
+       <form id="namef" class="row" style="align-items:flex-end"><label class="field" style="flex:1;margin:0"><span>Ton prénom (affiché sur tes saisies)</span><input name="n" maxlength="30" value="${esc(S.profiles[S.me] || '')}"></label><button class="btn" type="submit">OK</button></form>
+       <button class="btn block" data-act="logout" style="margin-top:12px">Se déconnecter</button>`
+    : `<p>Mode local : les données sont stockées sur ce téléphone uniquement.</p>${fbConfigured() ? '<button class="btn block" data-act="use-sync" style="margin-top:10px">Revenir à la synchronisation</button>' : ''}`;
+  h += `<div class="sec-title"><h3>Apparence</h3></div><div class="card"><div class="chips">${[['auto', 'Automatique'], ['day', 'Jour'], ['night', 'Nuit']].map(([v, l]) => `<button class="chip" data-act="theme" data-v="${v}" aria-pressed="${S.theme === v}">${l}</button>`).join('')}</div><p class="small muted" style="margin-top:8px">Automatique : thème nuit entre l'heure du coucher et l'heure du réveil.</p></div>`;
+  h += `<div class="sec-title"><h3>Partage</h3></div><div class="card">${sync}</div>`;
+  h += `<div class="sec-title"><h3>Sauvegarde</h3></div><div class="card"><p class="small muted" style="margin-bottom:10px">Télécharge une sauvegarde de toutes les données (fichier .json), ou restaure-en une.</p><div class="row"><button class="btn" data-act="export-file">Télécharger la sauvegarde</button><button class="btn" data-act="import">Restaurer</button></div><button class="btn block" data-act="import-napper" style="margin-top:8px">Importer un export Napper (CSV)</button></div>`;
+  h += `<p class="foot">Petit Dodo v2.0 · DevLabs - A. Giraud<br>Estimations indicatives, elles ne remplacent pas l'avis d'un professionnel de santé.</p>`;
+  return h;
+}
+
+/* ---------- Sheets ---------- */
+function openSheet(html, mount) {
+  const el = $('#sheet');
+  el.innerHTML = `<div class="scrim" data-close></div><div class="panel" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+  el.classList.add('open');
+  S.lastFocus = document.activeElement;
+  if (mount) mount(el);
+  const f = el.querySelector('[autofocus]') || el.querySelector('.panel button, .panel input');
+  if (f) f.focus({ preventScroll: true });
+}
+function closeSheet() { const el = $('#sheet'); el.classList.remove('open'); el.innerHTML = ''; if (S.lastFocus && S.lastFocus.focus) try { S.lastFocus.focus({ preventScroll: true }); } catch (e) {} }
+const seg = (name, opts, cur) => `<div class="seg" role="radiogroup">${opts.map(([v, l]) => `<label><input type="radio" name="${name}" value="${v}"${v === cur ? ' checked' : ''}><span>${l}</span></label>`).join('')}</div>`;
+const field = (label, inner) => `<label class="field"><span>${label}</span>${inner}</label>`;
+
+function editSheet(ev, isNew) {
+  const t = ev.type; let b = '';
+  if (t === 'sleep' || t === 'feed') {
+    if (t === 'feed') b += seg('side', [['G', 'Sein gauche'], ['D', 'Sein droit']], ev.side || 'G');
+    if (t === 'sleep' && !isNew) b += seg('night', [['0', 'Sieste'], ['1', 'Nuit']], isNight(ev) ? '1' : '0');
+    b += field('Début', `<input type="datetime-local" name="start" value="${toInput(ev.start)}" required>`);
+    b += field('Fin', `<input type="datetime-local" name="end" value="${ev.end ? toInput(ev.end) : ''}">`);
+    b += `<p class="hint">Laisse « Fin » vide si c'est encore en cours.</p>`;
+  } else if (t === 'bottle') {
+    b += field('Heure', `<input type="datetime-local" name="start" value="${toInput(ev.start)}" required>`);
+    b += `<div class="chips" style="margin-bottom:10px">${[60, 90, 120, 150, 180, 210].map(v => `<button type="button" class="chip" data-ml="${v}">${v} ml</button>`).join('')}</div>`;
+    b += field('Quantité (ml)', `<input type="number" name="ml" inputmode="numeric" min="0" max="400" step="5" value="${ev.ml || ''}" required>`);
+    b += seg('milk', [['infantile', 'Lait infantile'], ['maternel', 'Lait maternel']], ev.milk || 'infantile');
+  } else if (t === 'diaper') {
+    b += seg('kind', [['pipi', 'Pipi'], ['selle', 'Selle'], ['mixte', 'Les deux']], ev.kind || 'pipi');
+    b += field('Heure', `<input type="datetime-local" name="start" value="${toInput(ev.start)}" required>`);
+  } else if (t === 'bath') {
+    b += field('Heure', `<input type="datetime-local" name="start" value="${toInput(ev.start)}" required>`);
+    b += `<div class="chips" style="margin-bottom:10px">${[5, 10, 15, 20].map(v => `<button type="button" class="chip" data-min="${v}">${v} min</button>`).join('')}</div>`;
+    b += field('Durée (min)', `<input type="number" name="min" inputmode="numeric" min="1" max="90" step="1" value="${ev.min || ''}">`);
+  } else if (t === 'med') {
+    b += field('Heure', `<input type="datetime-local" name="start" value="${toInput(ev.start)}" required>`);
+    const rm = recentMeds();
+    if (rm.length) b += `<div class="chips" style="margin-bottom:10px">${rm.map(m => `<button type="button" class="chip" data-med="${esc(m)}">${esc(m)}</button>`).join('')}</div>`;
+    b += field('Traitement et dose', `<input name="text" maxlength="120" value="${esc(ev.text || '')}" placeholder="ex. Vitamine D, 1 goutte" autocomplete="off">`);
+  } else if (t === 'temp') {
+    b += field('Heure', `<input type="datetime-local" name="start" value="${toInput(ev.start)}" required>`);
+    b += field('Température (°C)', `<input type="number" name="c" inputmode="decimal" min="34" max="43" step="0.1" value="${ev.c || ''}" placeholder="ex. 37,2" autofocus>`);
+    b += `<p class="hint">Avant 3 mois, une température de 38 °C ou plus doit faire appeler le médecin rapidement, ou le 15 en cas de signe inquiétant.</p>`;
+  } else if (t === 'visit') {
+    b += field('Date et heure', `<input type="datetime-local" name="start" value="${toInput(ev.start)}" required>`);
+    b += `<div class="chips" style="margin-bottom:10px">${['Pédiatre', 'Médecin généraliste', 'PMI', 'Sage-femme', 'Hôpital'].map(v => `<button type="button" class="chip" data-who="${v}">${v}</button>`).join('')}</div>`;
+    b += field('Avec qui / où', `<input name="text" maxlength="80" value="${esc(ev.text || '')}" autocomplete="off">`);
+    b += field('Notes (motif, questions, compte rendu)', `<textarea name="notes" maxlength="1000" placeholder="ex. Vaccins 2 mois, questions sur les reflux…">${esc(ev.notes || '')}</textarea>`);
+    b += `<p class="hint">Tu peux aussi noter un rendez-vous à venir : il s'affichera sur l'accueil.</p>`;
+  } else if (t === 'growth') {
+    b += field('Date', `<input type="datetime-local" name="start" value="${toInput(ev.start)}" required>`);
+    b += field('Poids (kg)', `<input type="number" name="kg" inputmode="decimal" min="0.5" max="40" step="0.001" value="${ev.kg || ''}" placeholder="ex. 3,52">`);
+    b += `<div class="row"><label class="field" style="flex:1"><span>Taille (cm)</span><input type="number" name="height" inputmode="decimal" min="20" max="130" step="0.1" value="${ev.height || ''}"></label>`;
+    b += `<label class="field" style="flex:1"><span>Périmètre crânien (cm)</span><input type="number" name="head" inputmode="decimal" min="20" max="60" step="0.1" value="${ev.head || ''}"></label></div>`;
+    b += `<p class="hint">Remplis seulement ce que tu as mesuré.</p>`;
+  } else {
+    b += field('Heure', `<input type="datetime-local" name="start" value="${toInput(ev.start)}" required>`);
+    b += field('Note', `<textarea name="text" maxlength="500" placeholder="ex. 3 gouttes de vitamine D, rot difficile…">${esc(ev.text || '')}</textarea>`);
+  }
+  const ttl = { sleep: 'Dodo', feed: 'Tétée', bottle: 'Biberon', diaper: 'Couche', note: 'Note', bath: 'Bain', med: 'Traitement', growth: 'Mesure', temp: 'Température', visit: 'Rendez-vous' }[t];
+  openSheet(`<h2>${isNew ? 'Ajouter : ' + ttl.toLowerCase() : ttl}</h2><form id="evf" novalidate>${b}<p class="err" id="everr" role="alert"></p>
+    <div class="row"><button type="submit" class="btn primary">Enregistrer</button>${isNew ? '' : '<button type="button" class="btn danger" id="evdel">Supprimer</button>'}</div></form>`, el => {
+    const form = el.querySelector('#evf');
+    el.querySelectorAll('[data-ml]').forEach(btn => btn.addEventListener('click', () => { form.ml.value = btn.dataset.ml; }));
+    el.querySelectorAll('[data-min]').forEach(btn => btn.addEventListener('click', () => { form.min.value = btn.dataset.min; }));
+    el.querySelectorAll('[data-who]').forEach(btn => btn.addEventListener('click', () => { form.text.value = btn.dataset.who; }));
+    el.querySelectorAll('[data-med]').forEach(btn => btn.addEventListener('click', () => { form.text.value = btn.dataset.med; }));
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const fd = new FormData(form), out = Object.assign({}, ev), err = el.querySelector('#everr');
+      out.start = fromInput(fd.get('start'));
+      if (!out.start) { err.textContent = 'Indique une heure de début.'; return; }
+      if (t === 'sleep' || t === 'feed') {
+        out.end = fromInput(fd.get('end'));
+        if (out.end != null && out.end < out.start) { err.textContent = 'La fin doit être après le début.'; return; }
+        if (out.end != null && out.end - out.start > 16 * HR) { err.textContent = 'Durée trop longue : vérifie les dates.'; return; }
+        if (t === 'feed') out.side = fd.get('side');
+        if (t === 'sleep' && fd.get('night') != null) out.night = fd.get('night') === '1';
+      }
+      if (t === 'bottle') { out.ml = Number(fd.get('ml')); if (!out.ml) { err.textContent = 'Indique la quantité.'; return; } out.milk = fd.get('milk'); }
+      if (t === 'diaper') out.kind = fd.get('kind');
+      if (t === 'note') { out.text = String(fd.get('text') || '').trim(); if (!out.text) { err.textContent = 'Écris quelque chose.'; return; } }
+      if (t === 'med') { out.text = String(fd.get('text') || '').trim(); if (!out.text) { err.textContent = 'Indique le traitement.'; return; } }
+      if (t === 'temp') { const v = parseFloat(String(fd.get('c') || '').replace(',', '.')); if (!(v >= 34 && v <= 43)) { err.textContent = 'Indique une température entre 34 et 43 °C.'; return; } out.c = Math.round(v * 10) / 10; }
+      if (t === 'visit') { out.text = String(fd.get('text') || '').trim(); out.notes = String(fd.get('notes') || '').trim(); if (!out.text) { err.textContent = 'Indique avec qui ou où.'; return; } }
+      if (t === 'bath') { const m = Number(fd.get('min')); out.min = m > 0 ? Math.round(m) : null; }
+      if (t === 'growth') {
+        const num = k => { const v = parseFloat(String(fd.get(k) || '').replace(',', '.')); return isFinite(v) && v > 0 ? v : null; };
+        out.kg = num('kg'); out.height = num('height'); out.head = num('head');
+        if (!out.kg && !out.height && !out.head) { err.textContent = 'Indique au moins une mesure.'; return; }
+        if (out.kg && (out.kg < 0.5 || out.kg > 40)) { err.textContent = 'Poids en kilos, par exemple 3,52.'; return; }
+        if (out.height && (out.height < 20 || out.height > 130)) { err.textContent = 'Taille en centimètres, par exemple 52.'; return; }
+        if (out.head && (out.head < 20 || out.head > 60)) { err.textContent = 'Périmètre crânien en centimètres, par exemple 36.'; return; }
+      }
+      if (isNew) { out.by = S.me || null; out.at = Date.now(); }
+      closeSheet(); await putEvent(out); toast('Enregistré');
+    });
+    const del = el.querySelector('#evdel');
+    if (del) del.addEventListener('click', async () => {
+      if (!del.classList.contains('armed')) { del.classList.add('armed'); del.textContent = 'Confirmer la suppression'; return; }
+      closeSheet(); await delEvent(ev); toast('Supprimé');
+    });
+  });
+}
+function blank(type, start) { return { id: newId(), type, start: start || Date.now(), by: S.me || null, at: Date.now() }; }
+
+function feedSheet() {
+  const f = ongoing('feed');
+  if (f) {
+    openSheet(`<h2>Tétée en cours</h2><p class="muted">Sein ${sideName(f.side)} depuis ${hm(f.start)}</p><div class="bigchoice"><button data-act="feed-switch"><span class="em">🔄</span>Changer de côté</button><button data-act="feed-stop"><span class="em">✅</span>Terminer</button></div>`);
+    return;
+  }
+  const sug = otherSide(lastSide() || 'D');
+  const btn = s => `<button data-act="feed-start" data-side="${s}" class="${s === sug ? 'sug' : ''}"><span class="em">🤱</span>Sein ${sideName(s)}${s === sug ? '<small>suggéré</small>' : ''}</button>`;
+  openSheet(`<h2>Quel côté ?</h2><div class="bigchoice">${btn('G')}${btn('D')}</div><button class="link" data-act="feed-past">Noter une tétée passée</button>`);
+}
+function diaperSheet() {
+  const b = (k, em, l) => `<button data-act="diaper-save" data-kind="${k}"><span class="em">${em}</span>${l}</button>`;
+  openSheet(`<h2>Couche</h2><div class="bigchoice three">${b('pipi', '💧', 'Pipi')}${b('selle', '💩', 'Selle')}${b('mixte', '🌀', 'Les deux')}</div><button class="link" data-act="diaper-past">Noter à une autre heure</button>`);
+}
+function addSheet() {
+  const b = (t, l) => `<button data-act="add-type" data-type="${t}"><span class="em">${TYPES[t].em}</span>${l}</button>`;
+  openSheet(`<h2>Ajouter un événement</h2><div class="bigchoice">${b('sleep', 'Dodo')}${b('feed', 'Tétée')}${b('bottle', 'Biberon')}${b('diaper', 'Couche')}${b('bath', 'Bain')}${b('med', 'Traitement')}${b('growth', 'Mesure')}${b('temp', 'Température')}${b('visit', 'Rendez-vous')}${b('note', 'Note')}</div>`);
+}
+function moreSheet() {
+  const b = (t, l) => `<button data-act="add-now" data-type="${t}"><span class="em">${TYPES[t].em}</span>${l}</button>`;
+  openSheet(`<h2>Noter…</h2><div class="bigchoice">${b('bath', 'Bain')}${b('med', 'Traitement')}${b('temp', 'Température')}${b('growth', 'Mesure')}${b('visit', 'Rendez-vous')}${b('note', 'Note')}</div>`);
+}
+function withDefaults(ev) {
+  if (ev.type === 'bath') ev.min = 10;
+  if (ev.type === 'visit') ev.text = 'Pédiatre';
+  if (ev.type === 'med') { const r = recentMeds(); if (r.length) ev.text = r[0]; }
+  return ev;
+}
+function onboardSheet() {
+  const c = cfg();
+  openSheet(`<h2>Bienvenue dans Petit Dodo</h2><p class="muted" style="margin-bottom:14px">Quelques infos pour calculer les fenêtres d'éveil adaptées à son âge.</p>
+    <form id="obf"><label class="field"><span>Prénom du bébé</span><input name="babyName" value="${esc(c.babyName === 'Bébé' ? '' : c.babyName)}" placeholder="ex. Liam" autofocus maxlength="40"></label>
+    <div class="field"><span>Sexe</span>${seg('sex', [['M', 'Garçon'], ['F', 'Fille']], c.sex || '')}</div>
+    <label class="field"><span>Date de naissance</span><input type="date" name="birth" value="${esc(c.birth)}"></label>
+    <div class="row"><label class="field" style="flex:1"><span>Réveil habituel</span><input type="time" name="wakeTime" value="${esc(c.wakeTime)}"></label><label class="field" style="flex:1"><span>Coucher souhaité</span><input type="time" name="bedtime" value="${esc(c.bedtime)}"></label></div>
+    <button class="btn primary block" type="submit">Commencer</button></form>
+    <button class="btn block" data-act="import" style="margin-top:10px">J'ai une sauvegarde à restaurer</button>`, el => {
+    el.querySelector('#obf').addEventListener('submit', e => {
+      e.preventDefault(); const fd = new FormData(e.target);
+      saveConfig(Object.assign({}, cfg(), { babyName: String(fd.get('babyName') || '').trim() || 'Bébé', birth: fd.get('birth') || '', wakeTime: fd.get('wakeTime') || '07:00', bedtime: fd.get('bedtime') || '19:30', sex: fd.get('sex') || null }));
+      closeSheet();
+    });
+  });
+}
+function importSheet() {
+  openSheet(`<h2>Restaurer une sauvegarde</h2><p class="muted small" style="margin-bottom:12px">Choisis le fichier .json téléchargé depuis Petit Dodo (ou colle son contenu). Les événements déjà présents ne sont pas dupliqués.</p>
+    <label class="btn primary block" style="cursor:pointer">Choisir le fichier .json<input type="file" accept=".json,application/json" id="imfile" style="display:none"></label>
+    <form id="imf" style="margin-top:14px"><label class="field"><span>…ou colle le texte ici</span><textarea name="j"></textarea></label><p class="err" id="imerr" role="alert"></p><button class="btn block" type="submit">Restaurer depuis le texte</button></form>`, el => {
+    const err = el.querySelector('#imerr');
+    const run = async txt => {
+      let data; try { data = JSON.parse(txt); } catch (x) { err.textContent = 'Ce n\u2019est pas une sauvegarde Petit Dodo valide.'; return; }
+      const evs = Array.isArray(data.events) ? data.events.filter(x => x && x.id && x.type && typeof x.start === 'number') : [];
+      if (!evs.length) { err.textContent = 'Aucun événement trouvé dans cette sauvegarde.'; return; }
+      const have = new Set(S.events.map(e => e.id));
+      const add = evs.filter(x => !have.has(x.id)).map(x => { const o = Object.assign({}, x); delete o.day; if (typeof o.by === 'string' && o.by.startsWith('u_')) o.by = S.me || null; return o; });
+      closeSheet(); toast('Restauration de ' + add.length + ' événements…');
+      try {
+        await writeImport(add, []);
+        if (data.config && (!S.config || !cfg().birth || cfg().babyName === 'Bébé')) await saveConfig(Object.assign({}, cfg(), data.config));
+        toast(add.length ? add.length + ' événements restaurés' : 'Tout était déjà à jour');
+      } catch (x) { toast(errMsg(x)); }
+    };
+    el.querySelector('#imfile').addEventListener('change', async ev => { const f = ev.target.files && ev.target.files[0]; if (f) run(await f.text()); });
+    el.querySelector('#imf').addEventListener('submit', e => { e.preventDefault(); run(e.target.j.value); });
+  });
+}
+
+/* ---------- Actions ---------- */
+let toastT = null;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2600); }
+
+async function act(a, el) {
+  const now = Date.now();
+  switch (a) {
+    case 'sleep': {
+      const on = ongoing('sleep');
+      if (on) { await putEvent(Object.assign({}, on, { end: now })); toast('Réveil noté · ' + dur(now - on.start) + ' de sommeil'); }
+      else { await putEvent(Object.assign(blank('sleep', now), { end: null })); toast('Dodo commencé à ' + hm(now)); }
+      break;
+    }
+    case 'feed': feedSheet(); break;
+    case 'feed-start': closeSheet(); await putEvent(Object.assign(blank('feed', now), { side: el.dataset.side, end: null })); break;
+    case 'feed-stop': { const f = ongoing('feed'); closeSheet(); if (f) { await putEvent(Object.assign({}, f, { end: now })); toast('Tétée : ' + dur(now - f.start)); } break; }
+    case 'feed-switch': {
+      const f = ongoing('feed'); closeSheet(); if (!f) break;
+      await putEvent(Object.assign({}, f, { end: now }));
+      await putEvent(Object.assign(blank('feed', now + 1000), { side: otherSide(f.side), end: null }));
+      toast('Sein ' + sideName(otherSide(f.side))); break;
+    }
+    case 'feed-past': closeSheet(); editSheet(Object.assign(blank('feed', now - 30 * MIN), { end: now - 15 * MIN, side: otherSide(lastSide() || 'D') }), true); break;
+    case 'bottle': { const bs = S.events.filter(e => e.type === 'bottle'); const lb = bs[bs.length - 1]; editSheet(Object.assign(blank('bottle', now), { ml: lb ? lb.ml : 90, milk: lb ? lb.milk : 'infantile' }), true); break; }
+    case 'diaper': diaperSheet(); break;
+    case 'diaper-save': closeSheet(); await putEvent(Object.assign(blank('diaper', now), { kind: el.dataset.kind })); toast('Couche notée'); break;
+    case 'diaper-past': closeSheet(); editSheet(blank('diaper', now - 30 * MIN), true); break;
+    case 'note': editSheet(blank('note', now), true); break;
+    case 'add': addSheet(); break;
+    case 'add-type': {
+      closeSheet(); const t = el.dataset.type, ev = blank(t, now - 60 * MIN);
+      if (t === 'sleep' || t === 'feed') ev.end = now - (t === 'sleep' ? 15 : 45) * MIN;
+      if (t === 'feed') ev.side = otherSide(lastSide() || 'D');
+      if (t === 'bottle') ev.ml = 90;
+      withDefaults(ev);
+      editSheet(ev, true); break;
+    }
+    case 'more': moreSheet(); break;
+    case 'add-now': closeSheet(); editSheet(withDefaults(blank(el.dataset.type, now)), true); break;
+    case 'stats-tab': S.statsTab = el.dataset.v; render(); break;
+    case 'add-measure': editSheet(blank('growth', now), true); break;
+    case 'report': downloadReport(); break;
+    case 'edit': { const ev = S.events.find(e => e.id === el.dataset.id); if (ev) editSheet(ev, false); break; }
+    case 'journal-more': S.journalDays += 14; render(); break;
+    case 'snd': { const id = el.dataset.id; if (A.cur === id) stopSound(false); else { try { startSound(id); } catch (e) { toast('Lecture audio impossible sur cet appareil.'); } } render(); break; }
+    case 'snd-stop': stopSound(false); render(); break;
+    case 'snd-timer': A.timerMin = Number(el.dataset.v); A.stopAt = A.cur && A.timerMin ? Date.now() + A.timerMin * MIN : null; render(); break;
+    case 'export': {
+      const txt = JSON.stringify({ app: 'petit-dodo', v: 1, exported: new Date().toISOString(), config: S.config, events: S.events }, null, 0);
+      try { await navigator.clipboard.writeText(txt); toast('Données copiées (' + S.events.length + ' événements)'); }
+      catch (e) { openSheet(`<h2>Copie manuelle</h2><p class="muted small" style="margin-bottom:8px">Sélectionne tout le texte et copie-le.</p><label class="field"><span>Sauvegarde</span><textarea readonly style="min-height:200px">${esc(txt)}</textarea></label>`); }
+      break;
+    }
+    case 'import': importSheet(); break;
+    case 'export-file': {
+      const txt = JSON.stringify({ app: 'petit-dodo', v: 2, exported: new Date().toISOString(), config: S.config, events: S.events.map(e => { const o = Object.assign({}, e); delete o.day; return o; }) });
+      if (await saveFile('petit-dodo-sauvegarde-' + dayKey(Date.now()) + '.json', new Blob([txt], { type: 'application/json' }))) toast('Sauvegarde prête (' + S.events.length + ' événements)');
+      break;
+    }
+    case 'apply-update': applyUpdate(); break;
+    case 'logout': if (FBM && AUTH) { try { await FBM.auth.signOut(AUTH); } catch (e) {} } break;
+    case 'use-local': try { localStorage.setItem('petitdodo.mode', 'local'); } catch (e) {} location.reload(); break;
+    case 'use-sync': try { localStorage.removeItem('petitdodo.mode'); } catch (e) {} location.reload(); break;
+    case 'reset-pw': {
+      const email = ($('#loginf') && $('#loginf').email.value || '').trim();
+      if (!email) { $('#loginerr').textContent = 'Écris ton e-mail, puis touche « Mot de passe oublié ».'; break; }
+      try { await FBM.auth.sendPasswordResetEmail(AUTH, email); toast('E-mail de réinitialisation envoyé'); } catch (e) { $('#loginerr').textContent = 'Envoi impossible : vérifie l\u2019adresse.'; }
+      break;
+    }
+    case 'import-napper': importNapperSheet(); break;
+    case 'theme': S.theme = el.dataset.v; try { localStorage.setItem('petitdodo.theme', S.theme); } catch (e) {} S.settingsDirty = false; render(); break;
+  }
+}
+
+document.addEventListener('click', e => {
+  if (e.target.closest('[data-close]')) { closeSheet(); return; }
+  const tab = e.target.closest('[data-tab]');
+  if (tab) { if (S.tab !== tab.dataset.tab) { S.tab = tab.dataset.tab; S.settingsDirty = false; render(); window.scrollTo(0, 0); } return; }
+  const b = e.target.closest('[data-act]');
+  if (b) { e.preventDefault(); act(b.dataset.act, b); }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#sheet').classList.contains('open')) closeSheet(); });
+document.addEventListener('input', e => {
+  if (e.target.id === 'vol') { A.vol = Number(e.target.value); if (A.el) try { A.el.volume = A.vol; } catch (x) {} }
+  if (e.target.closest('#cfgf')) S.settingsDirty = true;
+});
+document.addEventListener('submit', e => {
+  if (e.target.id === 'namef') { e.preventDefault(); const n = String(new FormData(e.target).get('n') || '').trim(); if (n) saveMyName(n); return; }
+  if (e.target.id !== 'cfgf') return;
+  e.preventDefault(); const fd = new FormData(e.target);
+  S.settingsDirty = false;
+  const ga = Math.round(Number(fd.get('gaWeeks')) || 0), gaOk = ga >= 22 && ga <= 43;
+  const pw = gaOk && ga < 37 ? 40 - ga : 0; // âge corrigé : seulement pour les prématurés (< 37 SA), référence 40 SA
+  saveConfig(Object.assign({}, cfg(), { babyName: String(fd.get('babyName') || '').trim() || 'Bébé', birth: fd.get('birth') || '', wakeTime: fd.get('wakeTime') || '07:00', bedtime: fd.get('bedtime') || '19:30', gaWeeks: gaOk ? ga : null, premWeeks: pw, sex: fd.get('sex') || cfg().sex || null }));
+  toast('Réglages enregistrés');
+});
+
+/* ---------- Render ---------- */
+function render() {
+  if (S.tab === 'settings' && S.settingsDirty) return;
+  const now = Date.now(); let h = '';
+  const gate = S.mode === 'auth' || S.mode === 'setup';
+  document.querySelector('.nav').style.display = gate ? 'none' : '';
+  if (gate) { applyTheme(); $('#main').innerHTML = banner() + (S.mode === 'auth' ? viewAuth() : viewSetup()); return; }
+  if (S.tab === 'home') h = viewHome(now);
+  else if (S.tab === 'journal') h = viewJournal(now);
+  else if (S.tab === 'stats') h = viewStats(now);
+  else if (S.tab === 'sounds') h = viewSounds();
+  else h = viewSettings();
+  applyTheme();
+  $('#main').innerHTML = banner() + h;
+  document.querySelectorAll('.nav [data-tab]').forEach(b => { if (b.dataset.tab === S.tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+  if (S.configLoaded && !S.config && !S.onboardShown && !$('#sheet').classList.contains('open')) { S.onboardShown = true; onboardSheet(); }
+}
+let ticks = 0;
+setInterval(() => {
+  const now = Date.now();
+  document.querySelectorAll('[data-since]').forEach(el => { el.textContent = durClock(now - Number(el.dataset.since)); });
+  document.querySelectorAll('[data-until-clock]').forEach(el => { el.textContent = durClock(Number(el.dataset.untilClock) - now); });
+  if (A.stopAt && now >= A.stopAt) { stopSound(true); if (S.tab === 'sounds') render(); }
+  if (++ticks % 30 === 0 && (S.tab === 'home' || S.tab === 'journal' || S.tab === 'stats')) render();
+}, 1000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && S.tab !== 'settings') render(); });
+init();
+</script>
+</body>
+</html>
