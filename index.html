@@ -943,7 +943,10 @@ function predict(now) {
   for (let i = 0; i < 8; i++) {
     const st = cursor + P.ww * (first ? 0.85 : 1);
     if (st > bedT - P.ww * 0.6 || done >= P.naps + 1) break;
-    const it = { type: 'sleep', start: st, end: st + P.nap, predicted: true };
+    let en = st + P.nap;
+    const lim = bedT - P.ww * 0.8; // il faut une fenêtre d'éveil avant le coucher
+    if (en > lim) { if (lim - st < 20 * MIN) break; en = lim; }
+    const it = { type: 'sleep', start: st, end: en, predicted: true };
     res.items.push(it); cursor = it.end; done++; first = false;
   }
   res.bedtime = Math.min(Math.max(cursor + P.ww * 1.15, bedT - 45 * MIN), bedT + 45 * MIN);
@@ -1463,24 +1466,41 @@ function planList(now, pr) {
   const s0 = startOfDay(now);
   const rows = [];
   const today = sleeps().filter(s => (s.end == null ? now : s.end) >= s0 && s.start < s0 + DAY);
+  // La nuit passée (commencée la veille ou avant midi) : une seule ligne, avec les réveils nocturnes
+  const nightSegs = [];
+  for (const x of today) {
+    if (!isNight(x)) continue;
+    const prev = nightSegs[nightSegs.length - 1];
+    if (!prev) { if (x.start < s0 + 6 * HR) nightSegs.push(x); continue; }
+    if (prev.end && x.start - prev.end <= 90 * MIN) nightSegs.push(x); else break; // au-delà d'1 h 30 d'éveil, la nuit est finie
+  }
+  if (nightSegs.length) {
+    const first = nightSegs[0], last = nightSegs[nightSegs.length - 1];
+    const slept = nightSegs.reduce((t, x) => t + ((x.end || now) - x.start), 0);
+    const wakes = [];
+    for (let i = 1; i < nightSegs.length; i++) if (nightSegs[i - 1].end) wakes.push(hm(nightSegs[i - 1].end) + '–' + hm(nightSegs[i].start));
+    const lever = last.end ? 'lever ' + hm(last.end) : 'encore endormi' + gx('', 'e');
+    rows.push({ t: last.end || first.start, ic: '🌙', ttl: 'Nuit · ' + dur(slept) + ' de sommeil',
+      sub: (first.start < s0 ? 'coucher ' + hm(first.start) + ' · ' : '') + lever + (wakes.length ? '<br>' + wakes.length + ' réveil' + (wakes.length > 1 ? 's' : '') + ' : ' + wakes.join(', ') : ''), id: last.id });
+  }
   let napN = 0;
   for (const s of today) {
-    if (isNight(s) && s.start < s0) {
-      if (s.end) rows.push({ t: s.end, ic: '🌙', ttl: 'Fin de la nuit', sub: 'Réveil à ' + hm(s.end) + ' · ' + dur(s.end - s.start), id: s.id });
-      continue;
-    }
-    if (isNight(s)) {
-      const morning = minutesOf(s.start) < 12 * 60;
-      rows.push({ t: s.start, ic: '🌙', ttl: morning ? 'Nuit' : 'Coucher', sub: hm(s.start) + ' – ' + (s.end ? hm(s.end) + ' · ' + dur(s.end - s.start) : 'en cours'), id: s.id }); continue;
-    }
+    if (nightSegs.includes(s)) continue;
+    if (isNight(s) && minutesOf(s.start) >= 12 * 60) { rows.push({ t: s.start, ic: '🌙', ttl: 'Coucher', sub: hm(s.start) + ' – ' + (s.end ? hm(s.end) + ' · ' + dur(s.end - s.start) : 'en cours'), id: s.id }); continue; }
     napN++;
     rows.push({ t: s.start, ic: '😴', ttl: 'Sieste ' + napN, sub: hm(s.start) + ' – ' + (s.end ? hm(s.end) + ' · ' + dur(s.end - s.start) : 'en cours'), id: s.id });
   }
-  for (const it of pr.items) { napN++; rows.push({ t: it.start, ic: '😴', ttl: 'Sieste ' + napN + ' (prévue)', sub: hm(it.start) + ' – ' + hm(it.end) + ' · ' + dur(it.end - it.start), pred: true }); }
+  const SHOW = 2, its = pr.items;
+  its.slice(0, SHOW).forEach(it => { napN++; rows.push({ t: it.start, ic: '😴', ttl: 'Sieste ' + napN + ' (prévue)', sub: 'vers ' + hm(it.start) + ' · environ ' + dur(Math.round((it.end - it.start) / (5 * MIN)) * 5 * MIN), pred: true }); });
+  if (its.length > SHOW) {
+    const rest = its.slice(SHOW);
+    rows.push({ t: rest[0].start, ic: '💤', ttl: 'Puis ' + rest.length + ' sieste' + (rest.length > 1 ? 's' : '') + ' de plus', sub: 'à son rythme, à peu près toutes les ' + dur(Math.round((pr.P.ww + pr.P.nap) / (15 * MIN)) * 15 * MIN), pred: true, noTime: true });
+  }
   if (pr.bedtime) rows.push({ t: pr.bedtime, ic: '🌙', ttl: 'Coucher (prévu)', sub: 'vers ' + hm(pr.bedtime), pred: true });
   if (!rows.length) return `<div class="empty"><span class="em">🌤️</span>Note le premier dodo ou le réveil du matin pour lancer le planning.</div>`;
-  return `<ul class="list">${rows.map(r => {
-    const inner = `<span class="ic">${r.ic}</span><span class="main"><span class="ttl">${r.ttl}</span><br><span class="sub">${r.sub}</span></span><span class="tm">${hm(r.t)}</span>`;
+  const intro = pr.items.length || pr.bedtime ? `<p class="small muted" style="margin:0 0 6px">Prévisions d’après son rythme : éveillé ~${dur(pr.P.ww)} entre deux dodos, siestes de ~${dur(Math.round(pr.P.nap / (5 * MIN)) * 5 * MIN)}. Elles se recalent à chaque dodo noté.</p>` : '';
+  return intro + `<ul class="list">${rows.map(r => {
+    const inner = `<span class="ic">${r.ic}</span><span class="main"><span class="ttl">${r.ttl}</span><br><span class="sub">${r.sub}</span></span><span class="tm">${r.noTime ? '' : (r.pred ? '~' : '') + hm(r.t)}</span>`;
     return `<li class="${r.pred ? 'pred' : 'done'}">${r.id ? `<button class="rowbtn" data-act="edit" data-id="${esc(r.id)}">${inner}</button>` : inner}</li>`;
   }).join('')}</ul>`;
 }
@@ -2004,7 +2024,7 @@ function viewSettings() {
   h += notifCard();
   h += `<div class="sec-title"><h3>Partage</h3></div><div class="card">${sync}</div>`;
   h += `<div class="sec-title"><h3>Sauvegarde</h3></div><div class="card"><p class="small muted" style="margin-bottom:10px">Télécharge une sauvegarde de toutes les données (fichier .json), ou restaure-en une.</p><div class="row"><button class="btn" data-act="export-file">Télécharger la sauvegarde</button><button class="btn" data-act="import">Restaurer</button></div><button class="btn block" data-act="import-napper" style="margin-top:8px">Importer un export Napper (CSV)</button></div>`;
-  h += `<p class="foot">Petit Dodo v2.2.1 · DevLabs - A. Giraud<br>Estimations indicatives, elles ne remplacent pas l'avis d'un professionnel de santé.</p>`;
+  h += `<p class="foot">Petit Dodo v2.2.2 · DevLabs - A. Giraud<br>Estimations indicatives, elles ne remplacent pas l'avis d'un professionnel de santé.</p>`;
   return h;
 }
 
