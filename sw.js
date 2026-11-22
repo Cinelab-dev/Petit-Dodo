@@ -1,6 +1,6 @@
 /* Petit Dodo — service worker (DevLabs - A. Giraud)
    Change CACHE à chaque mise à jour publiée : les téléphones afficheront « Nouvelle version disponible ». */
-const CACHE = 'petitdodo-v2.2.0';
+const CACHE = 'petitdodo-v2.2.1';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'firebase-config.js', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 const FB = 'https://www.gstatic.com/firebasejs/';
 
